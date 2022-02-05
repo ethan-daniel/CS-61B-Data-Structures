@@ -60,7 +60,14 @@ public class Planet {
 		return net;
 	}
 	
-	
+	public void update(double dt, double fX, double fY){
+		double a_net_x = fX/mass;
+		double a_net_y = fY/mass;
+		xxVel = xxVel + dt * a_net_x;
+		yyVel= yyVel + dt * a_net_y;
+		xxPos = xxPos + dt * xxVel;
+		yyPos = yyPos + dt * yyVel;
+	}
 	
 	
 	
