@@ -47,7 +47,38 @@ public class NBody {
             allPlanets[i].draw();
         }
 
+        StdDraw.enableDoubleBuffering();
+        
+        double time = 0;
+
+        while (time != T){
+            double xForces[] = new double[allPlanets.length];
+            double yForces[] = new double[allPlanets.length];
+
+            for (int i = 0; i != allPlanets.length; ++i){
+                xForces[i] = allPlanets[i].calcNetForceExertedByX(allPlanets);
+                yForces[i] = allPlanets[i].calcNetForceExertedByY(allPlanets);
+            }
+
+            for (int i = 0; i != allPlanets.length; ++i){
+                allPlanets[i].update(dt, xForces[i], yForces[i]);
+            }
+
+            StdDraw.picture(0, 0, imageToDraw);
+            for (int i = 0; i != allPlanets.length; ++i){
+                allPlanets[i].draw();
+            }
+            StdDraw.show();
+            StdDraw.pause(10);
+
+            time += dt;
+        }
+        StdOut.printf("%d\n", planets.length);
+        StdOut.printf("%.2e\n", radius);
+        for (int i = 0; i < planets.length; i++) {
+        StdOut.printf("%11.4e %11.4e %11.4e %11.4e %11.4e %12s\n",
+                planets[i].xxPos, planets[i].yyPos, planets[i].xxVel,
+                planets[i].yyVel, planets[i].mass, planets[i].imgFileName);   
+        }
     }
-
-
 }
