@@ -1,6 +1,6 @@
 public class NBody {
-    public double mass, xxPos, xxVel, yyPos, yyVel;
-    public String imgFileName;
+    private double mass, xxPos, xxVel, yyPos, yyVel;
+    private String imgFileName;
 
     public static double readRadius (String filename) {
         In in = new In(filename);
