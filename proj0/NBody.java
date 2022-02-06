@@ -9,7 +9,43 @@ public class NBody {
 
     }
 
+    public static Planet[] readPlanets (String filename) {
+        In in = new In(filename);
+        int firstItemInFile = in.readInt();
+        Planet allPlanets[] = new Planet[firstItemInFile];
+        double secondItemInFile = in.readDouble();
+
+        for (int i = 0; i != firstItemInFile; ++i){
+            double xxPos = in.readDouble();
+            double yyPos = in.readDouble();
+            double xxVel = in.readDouble();
+            double yyVel = in.readDouble();
+            double mass = in.readDouble();
+            String imgFileName = in.readString();
+
+            Planet p = new Planet(xxPos, yyPos, xxVel, yyVel, mass, imgFileName);
+            allPlanets[i] = p;
+        }
+        return allPlanets;
+    }
+
     public static void main(String[] args) {
+        double T = Double.parseDouble(args[0]);
+        double dt = Double.parseDouble(args[1]);
+        String filename = args[2];
+        Planet allPlanets[] = readPlanets(filename);
+
+        double radius = readRadius(filename);
+
+        String imageToDraw = "images/starfield.jpg";
+        StdDraw.setScale(-radius, radius);
+
+        StdDraw.clear();
+        StdDraw.picture(0, 0, imageToDraw);
+
+        for (int i = 0; i != allPlanets.length; ++i){
+            allPlanets[i].draw();
+        }
 
     }
 
