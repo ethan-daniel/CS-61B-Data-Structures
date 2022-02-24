@@ -67,7 +67,7 @@ public class LinkedListDequeTest {
 		System.out.println("Running add/remove test.");
 
 		System.out.println("Make sure to uncomment the lines below (and delete this print statement).");
-		/*
+
 		LinkedListDeque<Integer> lld1 = new LinkedListDeque<Integer>();
 		// should be empty 
 		boolean passed = checkEmpty(true, lld1.isEmpty());
@@ -81,12 +81,34 @@ public class LinkedListDequeTest {
 		passed = checkEmpty(true, lld1.isEmpty()) && passed;
 
 		printTestStatus(passed);
-		*/
+
+	}
+
+	/** My implementation to print the nodes. Not a "REAL" test, but rather used to see what will happen. */
+	public static void printTest(){
+		System.out.println("Running printing test.");
+
+		LinkedListDeque<Integer> lld1 = new LinkedListDeque<Integer>();
+		lld1.addFirst(10);
+		lld1.addFirst(11);
+		lld1.addFirst(12);
+
+		lld1.addLast(13);
+		lld1.addLast(14);
+		lld1.addLast(15);
+		lld1.addLast(16);
+
+		lld1.removeFirst();
+		lld1.removeLast();
+
+		lld1.printDeque();
+
 	}
 
 	public static void main(String[] args) {
 		System.out.println("Running tests.\n");
 		addIsEmptySizeTest();
 		addRemoveTest();
+		printTest();
 	}
 } 
