@@ -269,6 +269,36 @@ public class LinkedListDequeTest {
 			ad1.removeFirst();
 		}
 		ad1.removeFirst();
+
+		for (int i = 0; i != 20; ++i){
+			ad1.addFirst((i*10) + 100);
+		}
+		for (int i = 0; i != 12; ++i){
+			ad1.removeLast();
+		}
+
+		for (int i = 0; i != 20; ++i){
+			ad1.addLast((i*10) + 100);
+		}
+
+		for (int i = 0; i != 12; ++i){
+			ad1.removeFirst();
+		}
+
+		ad1.addFirst(9999);
+
+		for (int i = 0; i != 16; ++i){
+			ad1.removeFirst();
+		}
+
+		ad1.removeFirst();
+
+		for (int i = 0; i != 3; ++i){
+			ad1.removeLast();
+		}
+
+		ad1.removeLast();
+
 	}
 
 	public static void main(String[] args) {

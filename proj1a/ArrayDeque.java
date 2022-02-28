@@ -13,6 +13,16 @@ public class ArrayDeque<T> {
     }
 
     /** Helper Functions*/
+
+    /** Returns corrected index. (The index that is in the )*/
+    public int correctedIndex(int index){
+        int adjusted_index = index + (nextFirst + 1);
+        if (adjusted_index >= items.length){
+            adjusted_index -= items.length;
+        }
+        return adjusted_index;
+    }
+
     /** Returns the first item in the array */
     public T getFirst() {
         if (!isEmpty()){
@@ -36,43 +46,62 @@ public class ArrayDeque<T> {
         return null;
     }
 
-    /** Grows the underlying array to the target capacity.
-     * Used in addLast() */
-    public void growLast(int capacity) {
-        T[] a = (T[]) new Object[capacity];
-        System.arraycopy(items, 0, a, 0, nextFirst + 1);
-        System.arraycopy(items, nextLast, a, nextFirst + capacity/2 + 1, size - nextLast);
-        nextFirst += capacity/2;
-        items = a;
-    }
+//    /** Grows the underlying array to the target capacity.
+//     * Used in addLast() */
+//    public void growLast(int capacity) {
+//        T[] a = (T[]) new Object[capacity];
+//        System.arraycopy(items, 0, a, 0, nextFirst + 1);
+//        System.arraycopy(items, nextLast, a, nextFirst + capacity/2 + 1, size - nextLast);
+//        nextFirst += capacity/2;
+//        items = a;
+//    }
+//
+//    /** Grows the underlying array to the target capacity.
+//     * Used in addLast() */
+//    public void growFirst(int capacity){
+//        T[] a = (T[]) new Object[capacity];
+//        System.arraycopy(items, 0, a, 0, nextLast);
+//        System.arraycopy(items, nextLast, a, nextLast + capacity/2, size - nextLast);
+//        nextFirst += capacity/2;
+//        items = a;
+//    }
+//
+//    /** Reduces the underlying array to the target capacity.
+//     * Used in removeFirst() */
+//    public void reduceFirst(int capacity){
+//        T[] a = (T[]) new Object[capacity];
+//        System.arraycopy(items, 0, a, 0, nextLast);
+//        if (items[items.length-1] != null) {
+//            System.arraycopy(items, nextFirst + 1, a, nextFirst + 1 - capacity, size - nextLast);
+//            nextFirst -= capacity;
+//        }
+//        items = a;
+//    }
 
-    /** Grows the underlying array to the target capacity.
-     * Used in addLast() */
-    public void growFirst(int capacity){
+//    /** Reduces the underlying array to the target capacity.
+//     * Used in removeLast() */
+//    public void reduceLast(int capacity){
+//        T[] a = (T[]) new Object[capacity];
+//
+//        for (int i = 0; i != size(); ++i){
+//            System.arraycopy(items, correctedIndex(i), a, i, 1);
+//        }
+//        // old implementation
+////        System.arraycopy(items, 0, a, 0, nextLast);
+////        System.arraycopy(items, nextFirst + 1, a, nextFirst + 1 - capacity, size - nextLast);
+//        nextFirst = a.length - 1;
+//        nextLast = size;
+//        items = a;
+//    }
+        /** Resizes the underlying array to the target capacity */
+        public void resize(int capacity){
         T[] a = (T[]) new Object[capacity];
-        System.arraycopy(items, 0, a, 0, nextLast);
-        System.arraycopy(items, nextLast, a, nextLast + capacity/2, size - nextLast);
-        nextFirst += capacity/2;
-        items = a;
-    }
 
-    /** Reduces the underlying array to the target capacity.
-     * Used in removeFirst() */
-    public void reduceFirst(int capacity){
-        T[] a = (T[]) new Object[capacity];
-        System.arraycopy(items, 0, a, 0, nextLast);
-        System.arraycopy(items, nextFirst + 1, a, nextFirst + 1 - capacity, size - nextLast);
-        nextFirst -= capacity;
-        items = a;
-    }
-
-    /** Reduces the underlying array to the target capacity.
-     * Used in removeLast() */
-    public void reduceLast(int capacity){
-        T[] a = (T[]) new Object[capacity];
-        System.arraycopy(items, 0, a, 0, nextLast);
-        System.arraycopy(items, nextFirst + 1, a, nextFirst + 1 - capacity, size - nextLast);
-        nextFirst -= capacity;
+        for (int i = 0; i != size(); ++i){
+            System.arraycopy(items, correctedIndex(i), a, i, 1);
+        }
+        nextFirst = a.length - 1;
+        nextLast = size;
         items = a;
     }
 
@@ -80,7 +109,7 @@ public class ArrayDeque<T> {
     public void addFirst(T item){
         //TODO: same as below issue
         if (nextFirst == nextLast - 1 && size == items.length){
-            growFirst(size * RFACTOR);
+            resize(size * RFACTOR);
         }
         if (nextFirst == -1){
             nextFirst = items.length - 1;
@@ -93,7 +122,7 @@ public class ArrayDeque<T> {
     public void addLast(T item){
         //TODO: resizing? what to do when trying to overwrite a front one
         if (nextLast == nextFirst + 1 && size == items.length) {
-            growLast(size * RFACTOR);
+            resize(size * RFACTOR);
         }
         if (nextLast == items.length){
             nextLast = 0;
@@ -129,7 +158,7 @@ public class ArrayDeque<T> {
             items[nextFirst] = null;
             --size;
             if ((float)size/items.length < 0.25 && items.length >= 16){
-                reduceFirst(items.length / RFACTOR);
+                resize(items.length / RFACTOR);
             }
             return x;
         }
@@ -145,7 +174,7 @@ public class ArrayDeque<T> {
             items[nextLast] = null;
             --size;
             if ((float)size/items.length < 0.25 && items.length >= 16){
-                reduceLast(items.length / RFACTOR);
+                resize(items.length / RFACTOR);
             }
 
             return x;
@@ -156,10 +185,7 @@ public class ArrayDeque<T> {
      * If no such item exists, returns null. Must not alter the deque!*/
     public T get(int index){
         if (!isEmpty()){
-            int adjusted_index = index + (nextFirst + 1);
-            if (adjusted_index >= items.length){
-                adjusted_index -= items.length;
-            }
+            int adjusted_index = correctedIndex(index);
             return items[adjusted_index];
         }
         return null;
