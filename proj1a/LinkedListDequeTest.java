@@ -192,6 +192,15 @@ public class LinkedListDequeTest {
 		ad1.addFirst("i");
 		ad1.addFirst("j");
 
+		ad1.get(0);
+		ad1.get(1);
+		ad1.get(2);
+		ad1.get(3);
+		ad1.get(4);
+		ad1.get(5);
+		ad1.get(6);
+
+
 		ad1.addLast("a");
 		ad1.addLast("b");
 		ad1.addLast("c");
@@ -224,6 +233,42 @@ public class LinkedListDequeTest {
 		ad1.addLast("h");
 		ad1.addLast("i");
 		ad1.addLast("j");
+
+		ad1.get(0);
+		ad1.get(1);
+		ad1.get(2);
+		ad1.get(3);
+		ad1.get(4);
+		ad1.get(5);
+		ad1.get(6);
+
+		ad1.printDeque();
+	}
+
+	public static void reductionTest1() {
+		ArrayDeque<Integer> ad1 = new ArrayDeque<Integer>();
+
+		for (int i = 0; i != 20; ++i){
+			ad1.addLast((i*10) + 100);
+		}
+		for (int i = 0; i != 12; ++i){
+			ad1.removeLast();
+		}
+		ad1.removeLast();
+		ad1.addFirst(90);
+		ad1.addLast(170);
+	}
+
+	public static void reductionTest2() {
+		ArrayDeque<Integer> ad1 = new ArrayDeque<Integer>();
+
+		for (int i = 0; i != 20; ++i){
+			ad1.addFirst((i*10) + 100);
+		}
+		for (int i = 0; i != 12; ++i){
+			ad1.removeFirst();
+		}
+		ad1.removeFirst();
 	}
 
 	public static void main(String[] args) {
@@ -233,6 +278,8 @@ public class LinkedListDequeTest {
 //		printTest();
 //		ArrayTests();
 //		ArrayResizeTests();
-		ArrayResizeTests2();
+//		ArrayResizeTests2();
+//		reductionTest1();
+		reductionTest2();
 	}
 } 
