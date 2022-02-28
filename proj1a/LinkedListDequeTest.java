@@ -105,10 +105,134 @@ public class LinkedListDequeTest {
 
 	}
 
+	/** My implementation to tests on ArrayDeque. Just for visualizer use. */
+	public static void ArrayTests() {
+		System.out.println("Running tests on ArrayDeque");
+
+		ArrayDeque<String> ad1 = new ArrayDeque<String>();
+
+		ad1.addLast("a");
+		ad1.addLast("b");
+		ad1.addFirst("c");
+		ad1.addLast("d");
+		ad1.addLast("e"); // wrapping around adding
+		ad1.addFirst("f");
+
+		ad1.removeFirst();
+		ad1.removeLast();
+		ad1.removeFirst();
+		ad1.removeLast();
+		ad1.removeFirst();
+		ad1.removeLast(); // wrapping around removal
+
+		ad1.removeFirst();
+		ad1.removeLast();
+
+		ad1.addLast("a");
+		ad1.addLast("b");
+		ad1.addLast("c");
+		ad1.addLast("d");
+		ad1.addLast("e");
+		ad1.addLast("f");
+		ad1.addLast("g");
+		ad1.addLast("h");
+		ad1.addLast("i");
+		ad1.addLast("j");
+
+		ad1.addLast("a");
+		ad1.addLast("b");
+		ad1.addLast("c");
+		ad1.addLast("d");
+		ad1.addLast("e");
+		ad1.addLast("f");
+		ad1.addLast("g");
+		ad1.addLast("h");
+		ad1.addLast("i");
+		ad1.addLast("j");
+
+	}
+
+	/** Another informal test*/
+	public static void ArrayResizeTests() {
+		ArrayDeque<String> ad1 = new ArrayDeque<String>();
+
+		ad1.addFirst("a");
+		ad1.addFirst("b");
+		ad1.addFirst("c");
+		ad1.addFirst("d");
+		ad1.addFirst("e");
+		ad1.addFirst("f");
+		ad1.addFirst("g");
+		ad1.addFirst("h");
+		ad1.addFirst("i");
+		ad1.addFirst("j");
+
+		ad1.addFirst("a");
+		ad1.addFirst("b");
+		ad1.addFirst("c");
+		ad1.addFirst("d");
+		ad1.addFirst("e");
+		ad1.addFirst("f");
+		ad1.addFirst("g");
+		ad1.addFirst("h");
+		ad1.addFirst("i");
+		ad1.addFirst("j");
+	}
+
+	public static void ArrayResizeTests2(){
+		ArrayDeque<String> ad1 = new ArrayDeque<String>();
+		ad1.addFirst("a");
+		ad1.addFirst("b");
+		ad1.addFirst("c");
+		ad1.addFirst("d");
+		ad1.addFirst("e");
+		ad1.addFirst("f");
+		ad1.addFirst("g");
+		ad1.addFirst("h");
+		ad1.addFirst("i");
+		ad1.addFirst("j");
+
+		ad1.addLast("a");
+		ad1.addLast("b");
+		ad1.addLast("c");
+		ad1.addLast("d");
+		ad1.addLast("e");
+		ad1.addLast("f");
+		ad1.addLast("g");
+		ad1.addLast("h");
+		ad1.addLast("i");
+		ad1.addLast("j");
+
+		ad1.addFirst("a");
+		ad1.addFirst("b");
+		ad1.addFirst("c");
+		ad1.addFirst("d");
+		ad1.addFirst("e");
+		ad1.addFirst("f");
+		ad1.addFirst("g");
+		ad1.addFirst("h");
+		ad1.addFirst("i");
+		ad1.addFirst("j");
+
+		ad1.addLast("a");
+		ad1.addLast("b");
+		ad1.addLast("c");
+		ad1.addLast("d");
+		ad1.addLast("e");
+		ad1.addLast("f");
+		ad1.addLast("g");
+		ad1.addLast("h");
+		ad1.addLast("i");
+		ad1.addLast("j");
+	}
+
 	public static void main(String[] args) {
 		System.out.println("Running tests.\n");
-		addIsEmptySizeTest();
-		addRemoveTest();
-		printTest();
+//		addIsEmptySizeTest();
+//		addRemoveTest();
+//		printTest();
+//		ArrayTests();
+//		ArrayResizeTests();
+		ArrayResizeTests2();
 	}
 } 
