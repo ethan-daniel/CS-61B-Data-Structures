@@ -45,7 +45,7 @@ public class ArrayDeque<T> {
     }
 
         /** Resizes the underlying array to the target capacity */
-        private void resize(int capacity) {
+    private void resize(int capacity) {
         T[] a = (T[]) new Object[capacity];
 
         for (int i = 0; i != size(); ++i) {
@@ -117,7 +117,7 @@ public class ArrayDeque<T> {
     /** Removes and returns the item at the back of the deque.
      * If no such item exists, returns null. */
     public T removeLast() {
-        if (!isEmpty()){
+        if (!isEmpty()) {
             T x = getLast();
             --nextLast;
             //items[nextLast] = null;
@@ -132,8 +132,8 @@ public class ArrayDeque<T> {
     }
     /** Gets the item at the given index, where 0 is the front, 1 is the next item, and so forth.
      * If no such item exists, returns null. Must not alter the deque!*/
-    public T get(int index){
-        if (!isEmpty()){
+    public T get(int index) {
+        if (!isEmpty()) {
             int adjustedIndex = correctedIndex(index);
             return items[adjustedIndex];
         }
