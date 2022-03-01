@@ -1,3 +1,5 @@
+import java.lang.reflect.Array;
+
 /** Performs some basic linked list tests. */
 public class LinkedListDequeTest {
 	
@@ -301,6 +303,39 @@ public class LinkedListDequeTest {
 
 	}
 
+	public static void lldgetRecursiveTest() {
+		LinkedListDeque<Integer> lld1 = new LinkedListDeque<Integer>();
+		lld1.addFirst(0);
+		lld1.addLast(1);
+		lld1.addLast(2);
+		lld1.getRecursive(0);
+	}
+
+	public static void ad_basic_get() {
+		ArrayDeque<Integer> ArrayDeque = new ArrayDeque<Integer>();
+
+		ArrayDeque.addLast(0);
+		ArrayDeque.get(0);
+		ArrayDeque.removeLast();
+		ArrayDeque.addFirst(3);
+		ArrayDeque.addLast(4);
+		ArrayDeque.addFirst(5);
+		ArrayDeque.addFirst(6);
+		ArrayDeque.addLast(7);
+		ArrayDeque.addFirst(8);
+		ArrayDeque.get(2);
+		ArrayDeque.get(2);
+		ArrayDeque.get(3);
+		ArrayDeque.removeLast();
+		ArrayDeque.addFirst(13);
+		ArrayDeque.removeFirst();
+		ArrayDeque.addFirst(15);
+		ArrayDeque.addLast(16);
+		ArrayDeque.addLast(17);
+		ArrayDeque.addFirst(18);
+		ArrayDeque.removeLast();
+	}
+
 	public static void main(String[] args) {
 		System.out.println("Running tests.\n");
 //		addIsEmptySizeTest();
@@ -311,5 +346,7 @@ public class LinkedListDequeTest {
 //		ArrayResizeTests2();
 //		reductionTest1();
 		reductionTest2();
+//		lldgetRecursiveTest();
+//		ad_basic_get();
 	}
 } 

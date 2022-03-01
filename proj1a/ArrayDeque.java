@@ -15,7 +15,7 @@ public class ArrayDeque<T> {
     /** Helper Functions*/
 
     /** Returns corrected index. (The index that is in the )*/
-    public int correctedIndex(int index){
+    private int correctedIndex(int index){
         int adjusted_index = index + (nextFirst + 1);
         if (adjusted_index >= items.length){
             adjusted_index -= items.length;
@@ -24,7 +24,7 @@ public class ArrayDeque<T> {
     }
 
     /** Returns the first item in the array */
-    public T getFirst() {
+    private T getFirst() {
         if (!isEmpty()){
             if (nextFirst == items.length - 1){
                 nextFirst = -1;
@@ -35,7 +35,7 @@ public class ArrayDeque<T> {
         return null;
     }
     /** Returns the last item in the array */
-    public T getLast() {
+    private T getLast() {
         if (!isEmpty()){
             if (nextLast == 0){
                 nextLast = items.length;
@@ -94,7 +94,7 @@ public class ArrayDeque<T> {
 //        items = a;
 //    }
         /** Resizes the underlying array to the target capacity */
-        public void resize(int capacity){
+        private void resize(int capacity){
         T[] a = (T[]) new Object[capacity];
 
         for (int i = 0; i != size(); ++i){
@@ -108,7 +108,7 @@ public class ArrayDeque<T> {
     /** Adds an item of type T to the front of the deque. */
     public void addFirst(T item){
         //TODO: same as below issue
-        if (nextFirst == nextLast - 1 && size == items.length){
+        if (size == items.length){
             resize(size * RFACTOR);
         }
         if (nextFirst == -1){
@@ -121,7 +121,7 @@ public class ArrayDeque<T> {
     /** Adds an item of type T to the back of the deque. */
     public void addLast(T item){
         //TODO: resizing? what to do when trying to overwrite a front one
-        if (nextLast == nextFirst + 1 && size == items.length) {
+        if (size == items.length) {
             resize(size * RFACTOR);
         }
         if (nextLast == items.length){
@@ -155,7 +155,7 @@ public class ArrayDeque<T> {
         if (!isEmpty()){
             T x = getFirst();
             ++nextFirst;
-            items[nextFirst] = null;
+            //items[nextFirst] = null;
             --size;
             if ((float)size/items.length < 0.25 && items.length >= 16){
                 resize(items.length / RFACTOR);
@@ -171,7 +171,7 @@ public class ArrayDeque<T> {
         if (!isEmpty()){
             T x = getLast();
             --nextLast;
-            items[nextLast] = null;
+            //items[nextLast] = null;
             --size;
             if ((float)size/items.length < 0.25 && items.length >= 16){
                 resize(items.length / RFACTOR);

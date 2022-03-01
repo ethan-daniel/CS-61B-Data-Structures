@@ -18,7 +18,7 @@ public class LinkedListDeque<T> {
     /** Helper functions */
     private T getRecursive(int i, Node n){
         if (i == 0){
-            return n.item;
+            return n.next.item;
         }
         return getRecursive(i-1, n.next);
     }
@@ -69,6 +69,9 @@ public class LinkedListDeque<T> {
     /** Removes and returns the item at the front of the deque.
      * If no such item exists, returns null. */
     public T removeFirst() {
+        if (isEmpty()){
+            return null;
+        }
         if (sentinel.next != null){
             T item = sentinel.next.item;
             sentinel.next = sentinel.next.next;
@@ -84,6 +87,9 @@ public class LinkedListDeque<T> {
     /** Removes and returns the item at the back of the deque.
      * If no such item exists, returns null. */
     public T removeLast(){
+        if (isEmpty()){
+            return null;
+        }
         if (sentinel.prev != null){
             T item = sentinel.prev.item;
             sentinel.prev = sentinel.prev.prev;
