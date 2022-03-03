@@ -4,27 +4,27 @@ ArrayDeque:
 
 Q: Give an example of at least one idea from the staff solution that would have made your solution better (if any).
 
-A: 
+A: I did not see the solution.
 
 Q: What's something you felt proud of in your code, if anything?
 
-A:
+A: I was proud of my ability to make the array circular, since it's intimidating to do on the surface.
 
 Q: What's something that was particularly inelegant in your code, if anything?
 
-A:
+A: Not too sure, but maybe I could have written additional helper functions for resizing in removeLast() and removeFirst() in ArrayDeque.
 
 Q: What did you learn by talking to your partner about writing ArrayDeque?
 
-A:
+A: I did not speak to a partner.
 
 Q: What do you wish you would have known before writing ArrayDeque, if anything?
 
-A:
+A: Probably to use get() in resize() before I wrote all the spaghetti code I did in my first attempt.
 
 Q: If you wrote ArrayDeque again, what would you do differently, if anything?
 
-A:
+A: I would have spent more time thinking about the functions I have given so that I could abstract away some of the complexity I faced later in optimizing the total size of my array.
 
 -----
 
@@ -32,27 +32,27 @@ LinkedListDeque:
 
 Q: Give an example of at least one idea from the staff solution that would have made your solution better (if any).
 
-A: 
+A: N/A
 
 Q: What's something you felt proud of in your code, if anything?
 
-A:
+A: I was proud of my ability to make the linked lists circular.
 
 Q: What's something that was particularly inelegant in your code, if anything?
 
-A:
+A: Not sure.
 
 Q: What did you learn by talking to your partner about writing LinkedListDeque?
 
-A:
+A: N/A
 
 Q: What do you wish you would have known before writing LinkedListDeque, if anything?
 
-A:
+A: Definitely understand recursion better. I was stuck on getRecursive().
 
 Q: If you wrote LinkedListDeque again, what would you do differently, if anything?
 
-A:
+A: Not sure. I had a good experience writing it.
 
 -----
 
@@ -60,4 +60,4 @@ Meta:
 
 Q: Did you like this design review process? Anything we should do differently next time?
 
-A: 
+A: N/A
