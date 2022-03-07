@@ -9,7 +9,7 @@ public class Palindrome {
 
     public boolean isPalindrome(String word) {
         Deque d = wordToDeque(word);
-        while (d.size() > 1){
+        while (d.size() > 1) {
             char first = (char) d.removeFirst();
             char last = (char) d.removeLast();
             if (first != last) {
