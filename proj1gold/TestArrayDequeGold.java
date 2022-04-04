@@ -43,6 +43,8 @@ public class TestArrayDequeGold {
             }
 
             for (int j = 0; j != ads1.size(); ++j) {
+                ads2.addLast("get(" + j + ")");
+                message += "get(" + j + ")" + "\n";
                 assertEquals(message, ads1.get(j), sad1.get(j));
             }
         }
