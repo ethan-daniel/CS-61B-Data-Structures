@@ -1,3 +1,4 @@
+/** Lab is not to be submitted, and therefore not graded. */
 package byog.lab5;
 import org.junit.Test;
 import static org.junit.Assert.*;
