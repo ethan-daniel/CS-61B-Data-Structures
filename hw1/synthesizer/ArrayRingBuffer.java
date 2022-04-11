@@ -8,8 +8,6 @@ public class ArrayRingBuffer<T> extends AbstractBoundedQueue<T> {
     private int last;
     /* Array for storing the buffer data. */
     private T[] rb;
-    /* Count of objects in the buffer. */
-    private int fillCount;
 
     @Override
     public Iterator<T> iterator() {
@@ -36,18 +34,6 @@ public class ArrayRingBuffer<T> extends AbstractBoundedQueue<T> {
             }
             return item;
         }
-    }
-
-    /** return size of the buffer */
-    @Override
-    public int capacity() {
-        return capacity;
-    }
-
-    /** return number of items currently in the buffer */
-    @Override
-    public int fillCount() {
-        return fillCount;
     }
 
     /**

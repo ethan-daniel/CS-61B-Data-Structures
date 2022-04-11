@@ -36,7 +36,7 @@ public class GuitarString {
      */
     public void tic() {
         double removed = buffer.dequeue();
-        double newSample = (removed + sample())/2;
+        double newSample = (removed + sample()) / 2;
         buffer.enqueue(newSample * DECAY);
     }
 
