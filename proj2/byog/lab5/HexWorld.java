@@ -113,7 +113,7 @@ public class HexWorld {
         }
     }
 
-    public static void main(String[]args) {
+    public static void main(String[] args) {
         TERenderer ter = new TERenderer();
         ter.initialize(WIDTH, HEIGHT);
         TETile[][] world = new TETile[WIDTH][HEIGHT];
