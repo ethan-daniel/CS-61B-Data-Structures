@@ -1,5 +1,6 @@
 package byog.Core;
 
+import java.util.Objects;
 public class Coordinates {
     private final int x;
     private final int y;
@@ -33,11 +34,7 @@ public class Coordinates {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + x;
-        result = prime * result + y;
-        return result;
+        return Objects.hash(x, y);
     }
 
 }

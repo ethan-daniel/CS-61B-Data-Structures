@@ -26,54 +26,83 @@ public class MapGenerator {
         }
     }
 
-    /** Some helper functions:
-     * */
+    /** Returns the width of the map. */
+    public int getWidth() {
+        return WORLD_WIDTH;
+    }
 
-    /** Draws a row of a given tile. */
+    /** Returns the height of the map. */
+    public int getHeight() {
+        return WORLD_HEIGHT;
+    }
+
+    /** Returns the room list. */
+    public ArrayList<Room> getRoomList() {
+        return roomList;
+    }
+
+    /** Returns world. */
+    public TETile[][] getWorld() {
+        return world;
+    }
+
+    /** Returns the number of rooms (hallways included) that are in the map. */
+    public int getNumRooms() {
+        return roomList.size();
+    }
+
+    /** Draws a row of a given tile.
+     * Add coordinates and texture to room map. */
     private void drawRow(Room room, int x_coordinate, int y_coordinate, int len, TETile texture) {
         for (int x = x_coordinate; x != x_coordinate + len; ++x) {
                 world[x][y_coordinate] = texture;
-                room.roomTiles.put(new Coordinates(x_coordinate, y_coordinate), texture);
         }
     }
+
+    private void drawRoom(Room room) {
+        for (Coordinates coor : room.getRoomTiles().keySet()) {
+            world[coor.getX()][coor.getY()] = room.getRoomTiles().get(coor);
+        }
+    }
+
     /** Checks if room can be placed.
      * This will NOT allow a room to be placed outside the bounds of the world.
      * This will NOT allow a room to be placed on another room. */
 
     private boolean isPlaceableRoom(Room room) {
-        if ((room.origin_y_coordinate + room.height) > WORLD_HEIGHT ||
-                (room.origin_x_coordinate + room.width) > WORLD_WIDTH) {
+        if ((room.getOriginYCoordinate() + room.getHeight()) > WORLD_HEIGHT ||
+                (room.getOriginXCoordinate() + room.getWidth()) > WORLD_WIDTH) {
             return false;
         }
-        for (Room r : roomList ){
-            for (Coordinates c : room.roomTiles.keySet()) {
-                if (r.roomTiles.containsKey(c)){
-                    return false;
-                }
-            }
-        }
         return true;
-    }
-    public class Room {
-        protected int width;
-        protected int height;
-        protected int origin_x_coordinate;
-        protected int origin_y_coordinate;
-        protected final Map<Coordinates, TETile> roomTiles = new HashMap<>();
 
-        Room(int width, int height, int origin_x_coordinate, int origin_y_coordinate) {
-            this.width = width;
-            this.height = height;
-            this.origin_x_coordinate = origin_x_coordinate;
-            this.origin_y_coordinate = origin_y_coordinate;
-        }
+//        for (Room r : roomList ){
+//            for (Coordinates c_r : r.roomTiles.keySet()){
+//                for (Coordinates c : room.roomTiles.keySet()) {
+//                    if (c_r.getX() == c.getX() && c_r.getY() == c.getY()){
+//                        return false;
+//                    }
+//                }
+//            for (Coordinates c : room.roomTiles.keySet()) {
+//                if (r.roomTiles.containsKey(c)){
+//                    return false;
+//                }
+//            }
+//            for (Coordinates c : room.roomTiles.keySet()) {
+//                if (r.roomTiles.){
+//                    return false;
+//                }
+//            }
+//        }
+//        return true;
     }
+
 
     public void drawRectangularRoom(Room room) {
         if (!isPlaceableRoom(room)){
             return;
         }
-
+        drawRoom(room);
     }
 
     public void drawHorizontalHallway(Room room) {
@@ -93,8 +122,5 @@ public class MapGenerator {
     public void drawCorner(Room room_a, Room room_b) {
 
     }
-
-
-
 
 }
