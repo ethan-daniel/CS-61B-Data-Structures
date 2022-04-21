@@ -1,8 +1,6 @@
 package byog.Core;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
 
@@ -51,14 +49,6 @@ public class MapGenerator {
         return roomList.size();
     }
 
-    /** Draws a row of a given tile.
-     * Add coordinates and texture to room map. */
-    private void drawRow(Room room, int x_coordinate, int y_coordinate, int len, TETile texture) {
-        for (int x = x_coordinate; x != x_coordinate + len; ++x) {
-                world[x][y_coordinate] = texture;
-        }
-    }
-
     private void drawRoom(Room room) {
         for (Coordinates coor : room.getRoomTiles().keySet()) {
             world[coor.getX()][coor.getY()] = room.getRoomTiles().get(coor);
@@ -74,35 +64,26 @@ public class MapGenerator {
                 (room.getOriginXCoordinate() + room.getWidth()) > WORLD_WIDTH) {
             return false;
         }
+
+        for (Room existing_room : roomList) {
+            for (Coordinates coordinates_key_e : existing_room.getRoomTiles().keySet()) {
+                for (Coordinates coordinates_key_g : room.getRoomTiles().keySet()) {
+                    if (coordinates_key_e.equals(coordinates_key_g)) {
+                        return false;
+                    }
+                }
+            }
+        }
+
         return true;
-
-//        for (Room r : roomList ){
-//            for (Coordinates c_r : r.roomTiles.keySet()){
-//                for (Coordinates c : room.roomTiles.keySet()) {
-//                    if (c_r.getX() == c.getX() && c_r.getY() == c.getY()){
-//                        return false;
-//                    }
-//                }
-//            for (Coordinates c : room.roomTiles.keySet()) {
-//                if (r.roomTiles.containsKey(c)){
-//                    return false;
-//                }
-//            }
-//            for (Coordinates c : room.roomTiles.keySet()) {
-//                if (r.roomTiles.){
-//                    return false;
-//                }
-//            }
-//        }
-//        return true;
     }
-
 
     public void drawRectangularRoom(Room room) {
         if (!isPlaceableRoom(room)){
             return;
         }
         drawRoom(room);
+        roomList.add(room);
     }
 
     public void drawHorizontalHallway(Room room) {
