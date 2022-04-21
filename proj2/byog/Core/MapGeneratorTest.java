@@ -21,7 +21,7 @@ public class MapGeneratorTest {
         MapGenerator map = new MapGenerator(50, 50);
         Room room = new Room(10, 10, 4, 4);
         Room room2 = new Room(10, 10, 0, 0);
-        Room room3 = new Room(5, 5, 30, 30);
+        Room room3 = new Room(10, 10, 30, 30);
 
         map.drawRectangularRoom(room);
         map.drawRectangularRoom(room2);
@@ -39,12 +39,27 @@ public class MapGeneratorTest {
         MapGenerator map = new MapGenerator(50, 50);
         Room room = new Room(10, 15, 4, 4);
 
-        Room hallway = new Room(10, 3, 7, 6);
-        Room hallway2 = new Room(10, 3, 12, 14);
+        Room hallway = new Room(3, 20, 7, 6);
+        Room hallway2 = new Room(3, 3, 30, 30);
 
         map.drawRectangularRoom(room);
         map.drawHallway(hallway);
         map.drawHallway(hallway2);
+
+        System.out.println("Num. Rooms: " + map.getNumRooms());
+        System.out.println("Num. Hallways: " + map.getNumHallways());
+        TERenderer ter = new TERenderer();
+        ter.initialize(50, 50);
+        ter.renderFrame(map.getWorld());
+
+    }
+
+    public static void TestMapRendering() {
+        MapGenerator map = new MapGenerator(50, 50);
+
+        map.generateMap(100);
+
+
 
         System.out.println("Num. Rooms: " + map.getNumRooms());
         System.out.println("Num. Hallways: " + map.getNumHallways());
@@ -56,7 +71,8 @@ public class MapGeneratorTest {
     public static void main(String[] args) {
 //        TestConstructor();
 //        TestRectangularRoomRendering();
-        TestHallwayRendering();
+//        TestHallwayRendering();
+        TestMapRendering();
     }
 
 

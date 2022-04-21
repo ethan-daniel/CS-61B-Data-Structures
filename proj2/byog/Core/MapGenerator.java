@@ -3,6 +3,7 @@ package byog.Core;
 import java.util.ArrayList;
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
+import java.util.Random;
 
 public class MapGenerator {
     public static final TETile WALL = Tileset.WALL;
@@ -73,7 +74,6 @@ public class MapGenerator {
     /** Checks if room can be placed.
      * This will NOT allow a room to be placed outside the bounds of the world.
      * */
-
     private boolean isPlaceableRoom(Room room) {
         if ((room.getOriginYCoordinate() + room.getHeight()) > WORLD_HEIGHT ||
                 (room.getOriginXCoordinate() + room.getWidth()) > WORLD_WIDTH) {
@@ -99,6 +99,16 @@ public class MapGenerator {
         return false;
     }
 
+//    private boolean overlapsOuterFloor(Room room) {
+//        for (Room existing_room : roomList) {
+//            for (Coordinates coordinates_key : existing_room.getRoomTiles().keySet()) {
+//                for (Coordinates coordinates_room : room.getOuterFloorTiles()) {
+//                    if ()
+//                }
+//            }
+//        }
+//    }
+
     public void drawRectangularRoom(Room room) {
         if (!isPlaceableRoom(room) || overlapsRoom(room)){
             return;
@@ -112,6 +122,7 @@ public class MapGenerator {
             return;
         }
         drawRoom(room);
+        roomList.add(room);
         hallwayList.add(room);
     }
 
@@ -124,6 +135,30 @@ public class MapGenerator {
 
     public void drawCorner(Room room_a, Room room_b) {
 
+    }
+
+
+    public void generateRectangularRoom(int width, int height, Coordinates coor) {
+        Room room = new Room(width, height, coor.getX(), coor.getY());
+        drawRoom(room);
+    }
+
+    public void generateHorizontalHallway(int length, Coordinates coor) {
+        Room room = new Room(length, 3, coor.getX(), coor.getY());
+        drawHallway(room);
+    }
+
+    public void generateVerticalHallway(int length, Coordinates coor) {
+        Room room = new Room(3, length, coor.getX(), coor.getY());
+        drawHallway(room);
+    }
+
+    public void generateMap(long seed) {
+        Random generator = new Random(seed);
+        for (int i = 0; i != 10; ++i) {
+            double num = generator.nextDouble();
+            System.out.println(num);
+        }
     }
 
 }

@@ -16,9 +16,9 @@ public class RoomTest {
         System.out.println("Printing outer-floor tiles: ");
         room.printOuterFloorTiles();
 
-        System.out.println("\n\n\n");
+        System.out.println("\n\n");
 
-        Room room2 = new Room(4, 4, 2, 2);
+        Room room2 = new Room(3, 3, 2, 2);
         System.out.println("Width: " + room2.getWidth());
         System.out.println("Height: " + room2.getHeight());
         System.out.println("Origin X Coordinate: " + room2.getOriginXCoordinate());

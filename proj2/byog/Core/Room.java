@@ -41,7 +41,7 @@ public class Room {
 
         // Adding all outer floor tiles.
         setOuterFloorTiles(origin_x_coordinate + 1, origin_y_coordinate + 1, width - 2);
-        for (int y = origin_y_coordinate + 2; y != origin_y_coordinate + height - 2; ++y) {
+        for (int y = origin_y_coordinate + 2; y <= origin_y_coordinate + height - 2; ++y) {
             setOuterFloorTiles(origin_x_coordinate + 1, y, 1);
             setOuterFloorTiles(origin_x_coordinate + width - 2, y, 1);
         }
@@ -58,7 +58,9 @@ public class Room {
     /** Adds coordinates that are the outermost floor tiles. */
     private void setOuterFloorTiles(int x_coordinate, int y_coordinate, int len) {
         for (int x = x_coordinate; x != x_coordinate + len; ++x) {
-            outerFloorTiles.add(new Coordinates(x, y_coordinate));
+            if (!outerFloorTiles.contains(new Coordinates(x, y_coordinate))){
+                outerFloorTiles.add(new Coordinates(x, y_coordinate));
+            }
         }
     }
 
@@ -90,6 +92,10 @@ public class Room {
     /** Returns the room tiles data map. */
     public Map<Coordinates, TETile> getRoomTiles() {
         return roomTiles;
+    }
+
+    public ArrayList<Coordinates> getOuterFloorTiles() {
+        return outerFloorTiles;
     }
 
     /** Returns the size of the room. */
