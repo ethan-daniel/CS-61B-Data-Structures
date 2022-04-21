@@ -11,6 +11,7 @@ public class MapGenerator {
     private int WORLD_WIDTH;
     private int WORLD_HEIGHT;
     private final ArrayList<Room> roomList = new ArrayList<>();
+    private final ArrayList<Room> hallwayList = new ArrayList<>();
 
     /** Initializes world with given width and height. */
     MapGenerator(int width, int height) {
@@ -39,25 +40,39 @@ public class MapGenerator {
         return roomList;
     }
 
+    /** Returns the hallway list. */
+    public ArrayList<Room> getHallwayList() {
+        return hallwayList;
+    }
+
     /** Returns world. */
     public TETile[][] getWorld() {
         return world;
     }
 
-    /** Returns the number of rooms (hallways included) that are in the map. */
+    /** Returns the number of rooms that are in the map. */
     public int getNumRooms() {
         return roomList.size();
     }
 
+    /** Returns the number of hallways that are in the map. */
+    public int getNumHallways() {
+        return hallwayList.size();
+    }
+
+    /** Draws a room on the world, and forbids Wall textures from overwriting
+     * Floor textures. */
     private void drawRoom(Room room) {
         for (Coordinates coor : room.getRoomTiles().keySet()) {
-            world[coor.getX()][coor.getY()] = room.getRoomTiles().get(coor);
+            if (world[coor.getX()][coor.getY()] != FLOOR){
+                world[coor.getX()][coor.getY()] = room.getRoomTiles().get(coor);
+            }
         }
     }
 
     /** Checks if room can be placed.
      * This will NOT allow a room to be placed outside the bounds of the world.
-     * This will NOT allow a room to be placed on another room. */
+     * */
 
     private boolean isPlaceableRoom(Room room) {
         if ((room.getOriginYCoordinate() + room.getHeight()) > WORLD_HEIGHT ||
@@ -65,40 +80,47 @@ public class MapGenerator {
             return false;
         }
 
+        return true;
+    }
+
+    /** Checks if room overlaps.
+     * This will NOT allow a room to be placed on another room. */
+    private boolean overlapsRoom(Room room) {
         for (Room existing_room : roomList) {
             for (Coordinates coordinates_key_e : existing_room.getRoomTiles().keySet()) {
                 for (Coordinates coordinates_key_g : room.getRoomTiles().keySet()) {
                     if (coordinates_key_e.equals(coordinates_key_g)) {
-                        return false;
+                        return true;
                     }
                 }
             }
         }
 
-        return true;
+        return false;
     }
 
     public void drawRectangularRoom(Room room) {
-        if (!isPlaceableRoom(room)){
+        if (!isPlaceableRoom(room) || overlapsRoom(room)){
             return;
         }
         drawRoom(room);
         roomList.add(room);
     }
 
-    public void drawHorizontalHallway(Room room) {
+    public void drawHallway(Room room) {
         if (!isPlaceableRoom(room)){
             return;
         }
-
+        drawRoom(room);
+        hallwayList.add(room);
     }
 
-    public void drawVerticalHallway(Room room) {
-        if (!isPlaceableRoom(room)){
-            return;
-        }
-
-    }
+//    public void drawVerticalHallway(Room room) {
+//        if (!isPlaceableRoom(room)){
+//            return;
+//        }
+//
+//    }
 
     public void drawCorner(Room room_a, Room room_b) {
 

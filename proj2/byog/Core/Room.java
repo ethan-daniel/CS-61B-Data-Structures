@@ -3,6 +3,7 @@ package byog.Core;
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,8 +16,10 @@ public class Room {
     private int origin_y_coordinate;
     private boolean isHallway = false;
     private Map<Coordinates, TETile> roomTiles = new HashMap<>();
+    private ArrayList<Coordinates> outerFloorTiles = new ArrayList<>();
 
-    /** Room constructor. Assigns object variables with given arguments, and initializes the room's tiles. */
+    /** Room constructor. Assigns object variables with given arguments, and initializes the room's tiles.
+     * Also adds outer floor tiles to a list. */
     Room(int width, int height, int origin_x_coordinate, int origin_y_coordinate) {
         this.width = width;
         this.height = height;
@@ -27,6 +30,7 @@ public class Room {
             isHallway = true;
         }
 
+        // Adding all room tiles and textures.
         setRoomTiles(origin_x_coordinate, origin_y_coordinate, width, WALL);
         for (int y = origin_y_coordinate + 1; y != origin_y_coordinate + height - 1; ++y) {
             setRoomTiles(origin_x_coordinate, y, 1, WALL);
@@ -34,12 +38,27 @@ public class Room {
             setRoomTiles(origin_x_coordinate + width - 1, y, 1, WALL);
         }
         setRoomTiles(origin_x_coordinate, origin_y_coordinate + height - 1, width, WALL);
+
+        // Adding all outer floor tiles.
+        setOuterFloorTiles(origin_x_coordinate + 1, origin_y_coordinate + 1, width - 2);
+        for (int y = origin_y_coordinate + 2; y != origin_y_coordinate + height - 2; ++y) {
+            setOuterFloorTiles(origin_x_coordinate + 1, y, 1);
+            setOuterFloorTiles(origin_x_coordinate + width - 2, y, 1);
+        }
+        setOuterFloorTiles(origin_x_coordinate + 1, origin_y_coordinate + height - 2, width - 2);
     }
 
     /** Assigns tile textures with coordinates. */
     private void setRoomTiles(int x_coordinate, int y_coordinate, int len, TETile texture) {
         for (int x = x_coordinate; x != x_coordinate + len; ++x) {
             roomTiles.put(new Coordinates(x, y_coordinate), texture);
+        }
+    }
+
+    /** Adds coordinates that are the outermost floor tiles. */
+    private void setOuterFloorTiles(int x_coordinate, int y_coordinate, int len) {
+        for (int x = x_coordinate; x != x_coordinate + len; ++x) {
+            outerFloorTiles.add(new Coordinates(x, y_coordinate));
         }
     }
 
@@ -68,13 +87,19 @@ public class Room {
         return isHallway;
     }
 
+    /** Returns the room tiles data map. */
     public Map<Coordinates, TETile> getRoomTiles() {
         return roomTiles;
     }
 
-    /** Prints the size of the room. */
-    public void printRoomTileSize() {
-        System.out.println(roomTiles.size());
+    /** Returns the size of the room. */
+    public int getRoomTileSize() {
+        return roomTiles.size();
+    }
+
+    /** Returns the number of outer floor tiles. */
+    public int getNumOuterFloorTiles() {
+        return outerFloorTiles.size();
     }
 
     /** Prints all coordinates and their texture. */
@@ -91,6 +116,13 @@ public class Room {
             + tile_str + "], ");
         }
         System.out.println();
+    }
+
+    /** Prints all outer floor tiles. */
+    public void printOuterFloorTiles() {
+        for (Coordinates coor : outerFloorTiles) {
+            System.out.print("(" + coor.getX() + ", " + coor.getY() + "), ");
+        }
     }
 
 }
