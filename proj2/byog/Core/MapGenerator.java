@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
 import java.util.Random;
+import java.lang.Math;
 
 public class MapGenerator {
     public static final TETile WALL = Tileset.WALL;
@@ -11,6 +12,10 @@ public class MapGenerator {
     private final TETile[][] world;
     private int WORLD_WIDTH;
     private int WORLD_HEIGHT;
+    private int num_Rooms;
+    private int num_Hallways;
+    private long seed;
+    private final ArrayList<Coordinates> outerFloorCoordinates = new ArrayList<>();
     private final ArrayList<Room> roomList = new ArrayList<>();
     private final ArrayList<Room> hallwayList = new ArrayList<>();
 
@@ -153,12 +158,74 @@ public class MapGenerator {
         drawHallway(room);
     }
 
-    public void generateMap(long seed) {
+    /** Uses the seed to determine the number of rooms and hallways to be placed
+     * in the map.
+     * Note: There will be at least one room and two hallways. */
+    public void determineNumRoomsAndHallways() {
+        int area = WORLD_WIDTH * WORLD_HEIGHT;
+        int max_rooms = (int) (Math.sqrt(area) / 2);
+        int max_hallways = (int) (max_rooms * 1.5);
         Random generator = new Random(seed);
-        for (int i = 0; i != 10; ++i) {
-            double num = generator.nextDouble();
-            System.out.println(num);
-        }
+        num_Rooms = generator.nextInt(max_rooms - 1 + 1) + 1;
+        num_Hallways = generator.nextInt(max_hallways - 2 + 1) + 2;
+
+        System.out.println(num_Rooms);
+        System.out.println(num_Hallways);
+    }
+
+    /** Uses the given seed to determine the starting coordinates of the
+     * map generation (Biased to start in the bottom left corner.). */
+    public Coordinates determineStartingCoordinates() {
+        Random generator = new Random(seed);
+        int x = generator.nextInt((int) WORLD_WIDTH / 4);
+        int y = generator.nextInt((int) WORLD_HEIGHT / 4);
+
+        Coordinates coor = new Coordinates(x, y);
+        return coor;
+    }
+
+    /** Gets passed a pseudo-randomly different number to determine the next
+     * coordinate for placement on the map. */
+    public Coordinates determineNextCoordinateForPlacement(long input) {
+        Random generator = new Random(input);
+        int random_index = generator.nextInt(outerFloorCoordinates.size());
+        return outerFloorCoordinates.get(random_index);
+    }
+
+    /** Uses a given input to determine a pseudo random width.
+     * Note: The width must be at least 3. */
+    public int determineAWidth(long input) {
+        Random generator = new Random(input);
+        return generator.nextInt((int) (WORLD_WIDTH / 6) - 3 + 1) + 3;
+    }
+
+    /** Uses a given input to determine a pseudo random height.
+     * Note: The height must be at least 3. */
+    public int determineAHeight(long input) {
+        Random generator = new Random(input);
+        return generator.nextInt((int) (WORLD_HEIGHT / 6) - 3 + 1) + 3;
+    }
+
+    public void generateMap(long seed) {
+        this.seed = seed;
+        determineNumRoomsAndHallways();
+        Coordinates starting_coordinates = determineStartingCoordinates();
+        System.out.println("Starting Coordinates: (" + starting_coordinates.getX() + ", "
+                + starting_coordinates.getY() + ") ");
+
+        Random generator = new Random(seed);
+        generateRectangularRoom(determineAWidth(seed), 6, starting_coordinates);
+
+//        while (num_rooms != max_Rooms || num_hallways != max_Hallways) {
+//
+//        }
+
+//        Random generator = new Random(seed);
+//
+//        for (int i = 0; i != 10; ++i) {
+//            double num = generator.nextDouble();
+//            System.out.println(num);
+//        }
     }
 
 }

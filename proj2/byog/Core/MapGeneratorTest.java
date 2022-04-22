@@ -57,8 +57,7 @@ public class MapGeneratorTest {
     public static void TestMapRendering() {
         MapGenerator map = new MapGenerator(50, 50);
 
-        map.generateMap(100);
-
+        map.generateMap(10074);
 
 
         System.out.println("Num. Rooms: " + map.getNumRooms());
@@ -71,7 +70,7 @@ public class MapGeneratorTest {
     public static void main(String[] args) {
 //        TestConstructor();
 //        TestRectangularRoomRendering();
-//        TestHallwayRendering();
+        //TestHallwayRendering();
         TestMapRendering();
     }
 

@@ -19,7 +19,8 @@ public class Room {
     private ArrayList<Coordinates> outerFloorTiles = new ArrayList<>();
 
     /** Room constructor. Assigns object variables with given arguments, and initializes the room's tiles.
-     * Also adds outer floor tiles to a list. */
+     * Also adds outer floor tiles to a list.
+     * Note: A room must have at least height and width 3. */
     Room(int width, int height, int origin_x_coordinate, int origin_y_coordinate) {
         this.width = width;
         this.height = height;
