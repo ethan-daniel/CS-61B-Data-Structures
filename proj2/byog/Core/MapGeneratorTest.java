@@ -57,7 +57,8 @@ public class MapGeneratorTest {
     public static void TestMapRendering() {
         MapGenerator map = new MapGenerator(50, 50);
 
-        map.generateMap(10074);
+        map.generateMap(10974);
+        System.out.println(map.getOuterFloorCoordinates());
 
 
         System.out.println("Num. Rooms: " + map.getNumRooms());

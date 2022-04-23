@@ -12,8 +12,8 @@ public class MapGenerator {
     private final TETile[][] world;
     private int WORLD_WIDTH;
     private int WORLD_HEIGHT;
-    private int num_Rooms;
-    private int num_Hallways;
+    private int total_rooms;
+    private int total_hallways;
     private long seed;
     private final ArrayList<Coordinates> outerFloorCoordinates = new ArrayList<>();
     private final ArrayList<Room> roomList = new ArrayList<>();
@@ -49,6 +49,11 @@ public class MapGenerator {
     /** Returns the hallway list. */
     public ArrayList<Room> getHallwayList() {
         return hallwayList;
+    }
+
+    /** Returns the list of outer floor coordinates. */
+    public ArrayList<Coordinates> getOuterFloorCoordinates() {
+        return outerFloorCoordinates;
     }
 
     /** Returns world. */
@@ -142,20 +147,28 @@ public class MapGenerator {
 
     }
 
+    public void addOuterFloorCoordinates(Room room) {
+        for (Coordinates coor : room.getOuterFloorTiles()) {
+            outerFloorCoordinates.add(coor);
+        }
+    }
 
     public void generateRectangularRoom(int width, int height, Coordinates coor) {
         Room room = new Room(width, height, coor.getX(), coor.getY());
         drawRoom(room);
+        addOuterFloorCoordinates(room);
     }
 
     public void generateHorizontalHallway(int length, Coordinates coor) {
         Room room = new Room(length, 3, coor.getX(), coor.getY());
         drawHallway(room);
+        addOuterFloorCoordinates(room);
     }
 
     public void generateVerticalHallway(int length, Coordinates coor) {
         Room room = new Room(3, length, coor.getX(), coor.getY());
         drawHallway(room);
+        addOuterFloorCoordinates(room);
     }
 
     /** Uses the seed to determine the number of rooms and hallways to be placed
@@ -166,11 +179,11 @@ public class MapGenerator {
         int max_rooms = (int) (Math.sqrt(area) / 2);
         int max_hallways = (int) (max_rooms * 1.5);
         Random generator = new Random(seed);
-        num_Rooms = generator.nextInt(max_rooms - 1 + 1) + 1;
-        num_Hallways = generator.nextInt(max_hallways - 2 + 1) + 2;
+        this.total_rooms = generator.nextInt(max_rooms - 1 + 1) + 1;
+        this.total_hallways = generator.nextInt(max_hallways - 2 + 1) + 2;
 
-        System.out.println(num_Rooms);
-        System.out.println(num_Hallways);
+        System.out.println("Determined number of rooms: " + total_rooms);
+        System.out.println("Determined number of hallways: " + total_hallways);
     }
 
     /** Uses the given seed to determine the starting coordinates of the
@@ -186,37 +199,46 @@ public class MapGenerator {
 
     /** Gets passed a pseudo-randomly different number to determine the next
      * coordinate for placement on the map. */
-    public Coordinates determineNextCoordinateForPlacement(long input) {
+    public Coordinates determineNextCoordinateForPlacement(int input) {
         Random generator = new Random(input);
         int random_index = generator.nextInt(outerFloorCoordinates.size());
         return outerFloorCoordinates.get(random_index);
     }
 
     /** Uses a given input to determine a pseudo random width.
-     * Note: The width must be at least 3. */
-    public int determineAWidth(long input) {
+     * Note: The width must be at least 4 for rooms. */
+    public int determineAWidth(int input, boolean isHallway) {
         Random generator = new Random(input);
-        return generator.nextInt((int) (WORLD_WIDTH / 6) - 3 + 1) + 3;
+        if (isHallway) {
+            return generator.nextInt((int) (WORLD_WIDTH / 6) - 3 + 1) + 3;
+        }
+        return generator.nextInt((int) (WORLD_WIDTH / 6) - 4 + 1) + 4;
     }
 
     /** Uses a given input to determine a pseudo random height.
-     * Note: The height must be at least 3. */
-    public int determineAHeight(long input) {
+     * Note: The height must be at least 4 for room. */
+    public int determineAHeight(int input, boolean isHallway) {
         Random generator = new Random(input);
-        return generator.nextInt((int) (WORLD_HEIGHT / 6) - 3 + 1) + 3;
+        if (isHallway) {
+            return generator.nextInt((int) (WORLD_HEIGHT / 6) - 3 + 1) + 3;
+        }
+        return generator.nextInt((int) (WORLD_HEIGHT / 6) - 4 + 1) + 4;
     }
 
     public void generateMap(long seed) {
         this.seed = seed;
         determineNumRoomsAndHallways();
-        Coordinates starting_coordinates = determineStartingCoordinates();
-        System.out.println("Starting Coordinates: (" + starting_coordinates.getX() + ", "
-                + starting_coordinates.getY() + ") ");
+        Coordinates next_coordinates = determineStartingCoordinates();
+        System.out.println("Starting Coordinates: (" + next_coordinates.getX() + ", "
+                + next_coordinates.getY() + ") ");
 
         Random generator = new Random(seed);
-        generateRectangularRoom(determineAWidth(seed), 6, starting_coordinates);
+        int input_a = generator.nextInt();
+        int input_b = generator.nextInt();
 
-//        while (num_rooms != max_Rooms || num_hallways != max_Hallways) {
+        generateRectangularRoom(determineAWidth(input_a, false), determineAHeight(input_b, false), next_coordinates);
+
+//        while (getNumRooms() + getNumHallways() != total_hallways + total_rooms) {
 //
 //        }
 
