@@ -10,21 +10,8 @@ public class RoomTest {
         System.out.println("Origin Y Coordinate: " + room.getOriginYCoordinate());
         System.out.println("Hallway: " + room.isHallway());
         System.out.println("Size of room: " + room.getRoomTileSize());
-        System.out.println("Number of outer floor tiles: " + room.getNumOuterFloorTiles());
+        System.out.println("Number of outer floor tiles: " + room.getNumHallwayEnds());
         System.out.println("Printing Room tiles: ");
-        room.printRoomTiles();
-
-        System.out.println("Printing outer-floor tiles: ");
-        room.printFloorTiles(room.getOuterFloorTiles());
-        System.out.println("Printing north floor tiles: ");
-        room.printFloorTiles(room.getNorthFloors());
-        System.out.println("Printing south floor tiles: ");
-        room.printFloorTiles(room.getSouthFloors());
-        System.out.println("Printing west floor tiles: ");
-        room.printFloorTiles(room.getWestFloors());
-        System.out.println("Printing east floor tiles: ");
-        room.printFloorTiles(room.getEastFloors());
-
         System.out.println("\n\n");
 
         Room room2 = new Room(5, 5, 0, 0);
@@ -33,20 +20,21 @@ public class RoomTest {
         System.out.println("Origin X Coordinate: " + room2.getOriginXCoordinate());
         System.out.println("Origin Y Coordinate: " + room2.getOriginYCoordinate());
         System.out.println("Hallway: " + room2.isHallway());
-        System.out.println("Size of room: " + room.getRoomTileSize());
-        System.out.println("Number of outer floor tiles: " + room.getNumOuterFloorTiles());
-        System.out.println("Printing Room tiles: ");
+        System.out.println("Size of room: " + room2.getRoomTileSize());
+        System.out.println("Number of outer floor tiles: " + room2.getNumHallwayEnds());
 
-        System.out.println("Printing outer-floor tiles: ");
-        room2.printFloorTiles(room2.getOuterFloorTiles());
-        System.out.println("Printing north floor tiles: ");
-        room2.printFloorTiles(room2.getNorthFloors());
-        System.out.println("Printing south floor tiles: ");
-        room2.printFloorTiles(room2.getSouthFloors());
-        System.out.println("Printing west floor tiles: ");
-        room2.printFloorTiles(room2.getWestFloors());
-        System.out.println("Printing east floor tiles: ");
-        room2.printFloorTiles(room2.getEastFloors());
+        Room room3 = new Room(3, 5, 4, 2);
+        System.out.println("Width: " + room3.getWidth());
+        System.out.println("Height: " + room3.getHeight());
+        System.out.println("Origin X Coordinate: " + room3.getOriginXCoordinate());
+        System.out.println("Origin Y Coordinate: " + room3.getOriginYCoordinate());
+        System.out.println("Hallway: " + room3.isHallway());
+        System.out.println("Size of room: " + room3.getRoomTileSize());
+        System.out.println("Number of outer floor tiles: " + room3.getNumHallwayEnds());
+        System.out.println("Printing Room tiles: ");
+        room3.printHashMapTiles(room3.getRoomTiles());
+        System.out.println("Printing Hallway ends: ");
+        room3.printArrayListTiles(room3.getHallwayEnds());
 
 
     }

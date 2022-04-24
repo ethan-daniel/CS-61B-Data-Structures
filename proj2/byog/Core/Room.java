@@ -16,13 +16,7 @@ public class Room {
     private int origin_y_coordinate;
     private boolean isHallway = false;
     private Map<Coordinates, TETile> roomTiles = new HashMap<>();
-    private ArrayList<Coordinates> outerFloorTiles = new ArrayList<>();
-
-    private ArrayList<Coordinates> north_floors = new ArrayList<>();
-    private ArrayList<Coordinates> south_floors = new ArrayList<>();
-    private ArrayList<Coordinates> west_floors = new ArrayList<>();
-    private ArrayList<Coordinates> east_floors = new ArrayList<>();
-
+    private ArrayList<Coordinates> hallwayEnds = new ArrayList<>();
 
     /** Room constructor. Assigns object variables with given arguments, and initializes the room's tiles.
      * Also adds outer floor tiles to a list.
@@ -34,7 +28,7 @@ public class Room {
         this.origin_y_coordinate = origin_y_coordinate;
 
         if (this.width == 3 || this.height == 3) {
-            isHallway = true;
+            setHallwayProperties();
         }
 
         // Adding all room tiles and textures.
@@ -45,40 +39,25 @@ public class Room {
             setRoomTiles(origin_x_coordinate + width - 1, y, 1, WALL);
         }
         setRoomTiles(origin_x_coordinate, origin_y_coordinate + height - 1, width, WALL);
+    }
 
-        // Adding all outer floor tiles excluding corners.
-        setOuterFloorTiles(origin_x_coordinate + 2, origin_y_coordinate + 1, width - 3, outerFloorTiles);
-        for (int y = origin_y_coordinate + 2; y <= origin_y_coordinate + height - 2; ++y) {
-            setOuterFloorTiles(origin_x_coordinate + 1, y, 1, outerFloorTiles);
-            setOuterFloorTiles(origin_x_coordinate + width - 2, y, 1, outerFloorTiles);
+    private void setHallwayProperties() {
+        isHallway = true;
+        if (this.height == 3) {
+            hallwayEnds.add(new Coordinates(origin_x_coordinate + 1, origin_y_coordinate + 1));
+            hallwayEnds.add(new Coordinates(origin_x_coordinate + width - 2, origin_y_coordinate + 1));
         }
-        setOuterFloorTiles(origin_x_coordinate + 2, origin_y_coordinate + height - 2, width - 3, outerFloorTiles);
 
-
-        setOuterFloorTiles(origin_x_coordinate + 2, origin_y_coordinate + 1, width - 4, south_floors);
-        for (int y = origin_y_coordinate + 2; y <= origin_y_coordinate + height - 3; ++y) {
-            setOuterFloorTiles(origin_x_coordinate + 1, y, 1, west_floors);
-            setOuterFloorTiles(origin_x_coordinate + width - 2, y, 1, east_floors);
+        else if (this.width == 3) {
+            hallwayEnds.add(new Coordinates(origin_x_coordinate + 1, origin_y_coordinate + 1));
+            hallwayEnds.add(new Coordinates(origin_x_coordinate + 1, origin_y_coordinate + height - 2));
         }
-        setOuterFloorTiles(origin_x_coordinate + 2, origin_y_coordinate + height - 2, width - 4, north_floors);
-
-
-
     }
 
     /** Assigns tile textures with coordinates. */
     private void setRoomTiles(int x_coordinate, int y_coordinate, int len, TETile texture) {
         for (int x = x_coordinate; x != x_coordinate + len; ++x) {
             roomTiles.put(new Coordinates(x, y_coordinate), texture);
-        }
-    }
-
-    /** Adds coordinates that are the outermost floor tiles. */
-    private void setOuterFloorTiles(int x_coordinate, int y_coordinate, int len, ArrayList<Coordinates> al) {
-        for (int x = x_coordinate; x != x_coordinate + len; ++x) {
-            if (!al.contains(new Coordinates(x, y_coordinate))){
-                al.add(new Coordinates(x, y_coordinate));
-            }
         }
     }
 
@@ -112,21 +91,8 @@ public class Room {
         return roomTiles;
     }
 
-    public ArrayList<Coordinates> getOuterFloorTiles() {
-        return outerFloorTiles;
-    }
-
-    public ArrayList<Coordinates> getNorthFloors() {
-        return north_floors;
-    }
-    public ArrayList<Coordinates> getSouthFloors() {
-        return south_floors;
-    }
-    public ArrayList<Coordinates> getWestFloors() {
-        return west_floors;
-    }
-    public ArrayList<Coordinates> getEastFloors() {
-        return east_floors;
+    public ArrayList<Coordinates> getHallwayEnds() {
+        return hallwayEnds;
     }
 
     /** Returns the size of the room. */
@@ -135,49 +101,29 @@ public class Room {
     }
 
     /** Returns the number of outer floor tiles. */
-    public int getNumOuterFloorTiles() {
-        return outerFloorTiles.size();
-    }
-
-    /** Returns the number of north floor tiles. */
-    public int getNumNorthFloors() {
-        return north_floors.size();
-    }
-
-    /** Returns the number of south floor tiles. */
-    public int getNumSouthFloors() {
-        return south_floors.size();
-    }
-
-    /** Returns the number of west floor tiles. */
-    public int getNumWestFloors() {
-        return west_floors.size();
-    }
-
-    /** Returns the number of east floor tiles. */
-    public int getNumEastFloors() {
-        return east_floors.size();
+    public int getNumHallwayEnds() {
+        return hallwayEnds.size();
     }
 
     /** Prints all coordinates and their texture. */
-    public void printRoomTiles() {
-        for (Coordinates coor : roomTiles.keySet()){
+    public void printHashMapTiles(Map<Coordinates, TETile> c_map) {
+        for (Coordinates coor : c_map.keySet()){
             String tile_str = "";
-            if (roomTiles.get(coor) == FLOOR) {
+            if (c_map.get(coor) == FLOOR) {
                 tile_str = "FLOOR";
             }
-            else if (roomTiles.get(coor) == WALL) {
+            else if (c_map.get(coor) == WALL) {
                 tile_str = "WALL";
             }
             System.out.print("[(" + coor.getX() + ", " + coor.getY() + ") = "
-            + tile_str + "], ");
+                    + tile_str + "], ");
         }
         System.out.println();
     }
 
     /** Prints all outer floor tiles. */
-    public void printFloorTiles(ArrayList<Coordinates> coor_list) {
-        for (Coordinates coor : coor_list) {
+    public void printArrayListTiles(ArrayList<Coordinates> c_list) {
+        for (Coordinates coor : c_list) {
             System.out.print("(" + coor.getX() + ", " + coor.getY() + "), ");
         }
         System.out.println();

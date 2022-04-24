@@ -1,8 +1,11 @@
 package byog.Core;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
+
+import javax.sound.midi.SysexMessage;
 import java.util.Random;
 import java.lang.Math;
 
@@ -13,12 +16,16 @@ public class MapGenerator {
     private int WORLD_WIDTH;
     private int WORLD_HEIGHT;
     private int total_rooms;
-    private int total_hallways;
+    private int total_horizontal_hallways;
+    private int total_vertical_hallways;
     private long seed;
     private Random generator;
     private final ArrayList<Coordinates> placeableFloorCoordinates = new ArrayList<>();
+    private final ArrayList<Coordinates> placeableFloorCoordinatesRooms = new ArrayList<>();
     private final ArrayList<Room> roomList = new ArrayList<>();
     private final ArrayList<Room> hallwayList = new ArrayList<>();
+    private final ArrayList<Room> horizontalHallwayList = new ArrayList<>();
+    private final ArrayList<Room> verticalHallwayList = new ArrayList<>();
 
     /** Initializes world with given width and height. */
     MapGenerator(int width, int height) {
@@ -48,8 +55,18 @@ public class MapGenerator {
     }
 
     /** Returns the hallway list. */
-    public ArrayList<Room> getHallwayList() {
+    public ArrayList<Room> gethallwayList() {
         return hallwayList;
+    }
+
+    /** Returns the horizontal hallway list. */
+    public ArrayList<Room> getHorizontalHallwayList() {
+        return horizontalHallwayList;
+    }
+
+    /** Returns the vertical hallway list. */
+    public ArrayList<Room> getVerticalHallwayList() {
+        return verticalHallwayList;
     }
 
     /** Returns the list of outer floor coordinates. */
@@ -72,6 +89,16 @@ public class MapGenerator {
         return hallwayList.size();
     }
 
+    /** Returns the number of horizontal hallways that are in the map. */
+    public int getNumHorizontalHallways() {
+        return horizontalHallwayList.size();
+    }
+
+    /** Returns the number of vertical hallways that are in the map. */
+    public int getNumVerticalHallways() {
+        return verticalHallwayList.size();
+    }
+
     /** Draws a room on the world, and forbids Wall textures from overwriting
      * Floor textures. */
     private void drawRoom(Room room) {
@@ -88,6 +115,10 @@ public class MapGenerator {
     private boolean isPlaceableRoom(Room room) {
         if ((room.getOriginYCoordinate() + room.getHeight()) > WORLD_HEIGHT ||
                 (room.getOriginXCoordinate() + room.getWidth()) > WORLD_WIDTH) {
+            return false;
+        }
+        if (room.getOriginYCoordinate() < 0 ||
+                room.getOriginXCoordinate() < 0) {
             return false;
         }
 
@@ -110,8 +141,7 @@ public class MapGenerator {
         return false;
     }
 
-    /** Checks if hallway overlaps.
-     * This will NOT allow a room to be placed on another room. */
+    /** Checks if hallway overlaps. */
     private boolean overlapsHallway(Room room) {
         for (Room existing_hallway : hallwayList) {
             for (Coordinates coordinates_key_e : existing_hallway.getRoomTiles().keySet()) {
@@ -126,16 +156,6 @@ public class MapGenerator {
         return false;
     }
 
-//    private boolean overlapsOuterFloor(Room room) {
-//        for (Room existing_room : roomList) {
-//            for (Coordinates coordinates_key : existing_room.getRoomTiles().keySet()) {
-//                for (Coordinates coordinates_room : room.getOuterFloorTiles()) {
-//                    if ()
-//                }
-//            }
-//        }
-//    }
-
     public void drawRectangularRoom(Room room) {
         if (!isPlaceableRoom(room) || overlapsRoom(room)){
             return;
@@ -145,53 +165,35 @@ public class MapGenerator {
     }
 
     public void drawHallway(Room room) {
-        if (!isPlaceableRoom(room) || overlapsHallway(room)){
+        if (!isPlaceableRoom(room)){
             return;
         }
         drawRoom(room);
-        roomList.add(room);
-        hallwayList.add(room);
-    }
-
-//    public void drawVerticalHallway(Room room) {
-//        if (!isPlaceableRoom(room)){
-//            return;
-//        }
-//
-//    }
-
-    public void drawCorner(Room room_a, Room room_b) {
-
-    }
-
-    public void addPlaceableFloorCoordinates(Room room) {
-        ArrayList<Coordinates> allOuterFloorCoordinate = new ArrayList<>();
-        for (Coordinates coor : room.getOuterFloorTiles()) {
-            allOuterFloorCoordinate.add(coor);
-        }
-
         placeableFloorCoordinates.clear();
-        for (int i = 0; i != 1; ++i) {
-            placeableFloorCoordinates.add(allOuterFloorCoordinate.get(generator.nextInt(allOuterFloorCoordinate.size())));
+        for (Coordinates coor : room.getHallwayEnds()){
+            placeableFloorCoordinates.add(coor);
+            placeableFloorCoordinatesRooms.add(coor);
         }
     }
 
     public void generateRectangularRoom(int width, int height, Coordinates coor) {
         Room room = new Room(width, height, coor.getX(), coor.getY());
         drawRectangularRoom(room);
-        addPlaceableFloorCoordinates(room);
+        roomList.add(room);
     }
 
     public void generateHorizontalHallway(int length, Coordinates coor) {
         Room room = new Room(length, 3, coor.getX(), coor.getY());
         drawHallway(room);
-        addPlaceableFloorCoordinates(room);
+        hallwayList.add(room);
+        horizontalHallwayList.add(room);
     }
 
     public void generateVerticalHallway(int length, Coordinates coor) {
         Room room = new Room(3, length, coor.getX(), coor.getY());
         drawHallway(room);
-        addPlaceableFloorCoordinates(room);
+        hallwayList.add(room);
+        verticalHallwayList.add(room);
     }
 
     /** Uses the seed to determine the number of rooms and hallways to be placed
@@ -199,13 +201,20 @@ public class MapGenerator {
      * Note: There will be at least one room and two hallways. */
     public void determineNumRoomsAndHallways() {
         int area = WORLD_WIDTH * WORLD_HEIGHT;
-        int max_rooms = (int) (Math.sqrt(area) / 2);
-        int max_hallways = (int) (max_rooms * 1.5);
+        int max_rooms = (int) (Math.sqrt(area) / 3);
+        int max_horizontal_hallways = (int) (max_rooms * (1 + generator.nextDouble()));
+        int max_vertical_hallways = (int) (max_rooms * (1 + generator.nextDouble()));
         this.total_rooms = generator.nextInt(max_rooms - 1 + 1) + 1;
-        this.total_hallways = generator.nextInt(max_hallways - 2 + 1) + 2;
+        this.total_horizontal_hallways = generator.nextInt(max_horizontal_hallways - 2 + 1) + 2;
+        this.total_vertical_hallways = generator.nextInt(max_vertical_hallways - 2 + 1) + 2;
 
-        System.out.println("Determined number of rooms: " + total_rooms);
-        System.out.println("Determined number of hallways: " + total_hallways);
+        System.out.println("Max rooms: " + max_rooms);
+        System.out.println("Max h hallways: " + max_horizontal_hallways);
+        System.out.println("Max v hallways: " + max_vertical_hallways);
+
+        System.out.println("Determined total rooms: " + total_rooms);
+        System.out.println("Determined total horizontal hallways: " + total_horizontal_hallways);
+        System.out.println("Determined total vertical hallways: " + total_vertical_hallways);
     }
 
     /** Uses the given seed to determine the starting coordinates of the
@@ -218,88 +227,117 @@ public class MapGenerator {
         return coor;
     }
 
-    /** Gets passed a pseudo-randomly different number to determine the next
-     * coordinate for placement on the map. */
-    public Coordinates determineNextCoordinateForPlacement(int input) {
-        int random_index = generator.nextInt(placeableFloorCoordinates.size());
-        return placeableFloorCoordinates.get(random_index);
+    public int determineALength() {
+        return generator.nextInt((int) (WORLD_WIDTH / 4) - 4 + 1) + 4;
+    }
+//
+    public Coordinates determineNextCoordinates() {
+        Coordinates temp = placeableFloorCoordinates.get(generator.nextInt(placeableFloorCoordinates.size()));
+        placeableFloorCoordinatesRooms.remove(temp);
+        int x = temp.getX();
+        int y = temp.getY();
+
+        return new Coordinates(x - 1, y - 1);
     }
 
-    /** Uses a given input to determine a pseudo random width.
-     * Note: The width must be at least 5 for rooms. */
-    public int determineAWidth(int input, boolean isHallway) {
-        return generator.nextInt((int) (WORLD_WIDTH / 6) - 5 + 1) + 5;
+    public Coordinates determineNextCoordinatesRoom() {
+        Coordinates temp = placeableFloorCoordinatesRooms.get(generator.nextInt(placeableFloorCoordinatesRooms.size()));
+        placeableFloorCoordinatesRooms.remove(temp);
+        int x = temp.getX();
+        int y = temp.getY();
+
+        return new Coordinates(x - 1, y - 1);
     }
 
-    /** Uses a given input to determine a pseudo random height.
-     * Note: The height must be at least 5 for room. */
-    public int determineAHeight(int input, boolean isHallway) {
-        return generator.nextInt((int) (WORLD_HEIGHT / 6) - 5 + 1) + 5;
+    public void generateAllHallways() {
+        while (getNumHorizontalHallways() != total_horizontal_hallways ||
+        getNumVerticalHallways() != total_vertical_hallways) {
+
+        }
     }
+
 
     public void generateMap(long seed) {
         this.seed = seed;
         generator = new Random(this.seed);
         determineNumRoomsAndHallways();
-        Coordinates next_coordinates = determineStartingCoordinates();
-        System.out.println("Starting Coordinates: (" + next_coordinates.getX() + ", "
-                + next_coordinates.getY() + ") ");
+        Coordinates start = determineStartingCoordinates();
+        start.print();
 
-        //Random generator = new Random(seed);
-//        int input_a = generator.nextInt();
-        //int input_b = generator.nextInt();
-
-        generateRectangularRoom(determineAWidth(generator.nextInt(), false), determineAHeight(generator.nextInt(), false), next_coordinates);
-        generateHorizontalHallway(determineAWidth(generator.nextInt(), true), determineNextCoordinateForPlacement(generator.nextInt()));
-        generateVerticalHallway(determineAHeight(generator.nextInt(), true), determineNextCoordinateForPlacement(generator.nextInt()));
-
-        generateRectangularRoom(determineAWidth(generator.nextInt(), false), determineAHeight(generator.nextInt(), false), next_coordinates);
-        generateHorizontalHallway(determineAWidth(generator.nextInt(), true), determineNextCoordinateForPlacement(generator.nextInt()));
-        generateVerticalHallway(determineAHeight(generator.nextInt(), true), determineNextCoordinateForPlacement(generator.nextInt()));
-
-        generateRectangularRoom(determineAWidth(generator.nextInt(), false), determineAHeight(generator.nextInt(), false), next_coordinates);
-        generateHorizontalHallway(determineAWidth(generator.nextInt(), true), determineNextCoordinateForPlacement(generator.nextInt()));
-        generateVerticalHallway(determineAHeight(generator.nextInt(), true), determineNextCoordinateForPlacement(generator.nextInt()));
-
-//        generateRectangularRoom(determineAWidth(generator.nextInt(), false), determineAHeight(generator.nextInt(), false), next_coordinates);
-//        generateHorizontalHallway(determineAWidth(generator.nextInt(), true), determineNextCoordinateForPlacement(generator.nextInt()));
-//        generateVerticalHallway(determineAHeight(generator.nextInt(), true), determineNextCoordinateForPlacement(generator.nextInt()));
-//        generateRectangularRoom(determineAWidth(generator.nextInt(), false), determineAHeight(generator.nextInt(), false), next_coordinates);
-//        generateHorizontalHallway(determineAWidth(generator.nextInt(), true), determineNextCoordinateForPlacement(generator.nextInt()));
-//        generateVerticalHallway(determineAHeight(generator.nextInt(), true), determineNextCoordinateForPlacement(generator.nextInt()));
-//        generateRectangularRoom(determineAWidth(generator.nextInt(), false), determineAHeight(generator.nextInt(), false), next_coordinates);
-//        generateHorizontalHallway(determineAWidth(generator.nextInt(), true), determineNextCoordinateForPlacement(generator.nextInt()));
-//        generateVerticalHallway(determineAHeight(generator.nextInt(), true), determineNextCoordinateForPlacement(generator.nextInt()));
-
-
-        //generateRectangularRoom(determineAWidth(generator.nextInt(), false), determineAHeight(generator.nextInt(), false), next_coordinates);
-        //generateHorizontalHallway(determineAWidth(generator.nextInt(), true), determineNextCoordinateForPlacement(generator.nextInt()));
-        //generateVerticalHallway(determineAHeight(generator.nextInt(), true), determineNextCoordinateForPlacement(generator.nextInt()));
-
-
-        //generateRectangularRoom(determineAWidth(input_a, false), determineAHeight(input_b, false), determineNextCoordinateForPlacement(generator.nextInt()));
-
-//        int i = 0;
+        generateHorizontalHallway(determineALength(), start);
+        generateVerticalHallway(determineALength(), determineNextCoordinates());
+        generateHorizontalHallway(determineALength(), determineNextCoordinates());
+        generateVerticalHallway(determineALength(), determineNextCoordinates());
+        generateHorizontalHallway(determineALength(), determineNextCoordinates());
+        generateVerticalHallway(determineALength(), determineNextCoordinates());
 //
-//        while (getNumRooms() + getNumHallways() != total_hallways + total_rooms || i == 100) {
-//            if (getNumRooms() != total_rooms) {
-//                generateRectangularRoom(determineAWidth(generator.nextInt(), false),
-//                        determineAHeight(generator.nextInt(), false),
-//                        determineNextCoordinateForPlacement(generator.nextInt()));
-//            }
-//            if (getNumHallways() != total_hallways) {
-//                generateHorizontalHallway(determineAWidth(generator.nextInt(), true), determineNextCoordinateForPlacement(generator.nextInt()));
-//                generateVerticalHallway(determineAHeight(generator.nextInt(), true), determineNextCoordinateForPlacement(generator.nextInt()));
-//            }
-//            ++i;
-//        }
+        generateVerticalHallway(determineALength(), determineNextCoordinates());
+        generateHorizontalHallway(determineALength(), determineNextCoordinates());
+        generateVerticalHallway(determineALength(), determineNextCoordinates());
+        generateHorizontalHallway(determineALength(), determineNextCoordinates());
+        generateVerticalHallway(determineALength(), determineNextCoordinates());
 
-//        Random generator = new Random(seed);
+        generateVerticalHallway(determineALength(), determineNextCoordinates());
+        generateHorizontalHallway(determineALength(), determineNextCoordinates());
+        generateVerticalHallway(determineALength(), determineNextCoordinates());
+        generateHorizontalHallway(determineALength(), determineNextCoordinates());
+        generateVerticalHallway(determineALength(), determineNextCoordinates());
+
+        generateVerticalHallway(determineALength(), determineNextCoordinates());
+        generateHorizontalHallway(determineALength(), determineNextCoordinates());
+        generateVerticalHallway(determineALength(), determineNextCoordinates());
+        generateHorizontalHallway(determineALength(), determineNextCoordinates());
+        generateVerticalHallway(determineALength(), determineNextCoordinates());
+
+        generateVerticalHallway(determineALength(), determineNextCoordinates());
+        generateHorizontalHallway(determineALength(), determineNextCoordinates());
+        generateVerticalHallway(determineALength(), determineNextCoordinates());
+        generateHorizontalHallway(determineALength(), determineNextCoordinates());
+        generateVerticalHallway(determineALength(), determineNextCoordinates());
+
+        generateVerticalHallway(determineALength(), determineNextCoordinates());
+        generateHorizontalHallway(determineALength(), determineNextCoordinates());
+        generateVerticalHallway(determineALength(), determineNextCoordinates());
+        generateHorizontalHallway(determineALength(), determineNextCoordinates());
+        generateVerticalHallway(determineALength(), determineNextCoordinates());
+
+        generateVerticalHallway(determineALength(), determineNextCoordinates());
+        generateHorizontalHallway(determineALength(), determineNextCoordinates());
+        generateVerticalHallway(determineALength(), determineNextCoordinates());
+        generateHorizontalHallway(determineALength(), determineNextCoordinates());
+        generateVerticalHallway(determineALength(), determineNextCoordinates());
+
+        generateVerticalHallway(determineALength(), determineNextCoordinates());
+        generateHorizontalHallway(determineALength(), determineNextCoordinates());
+        generateVerticalHallway(determineALength(), determineNextCoordinates());
+        generateHorizontalHallway(determineALength(), determineNextCoordinates());
+        generateVerticalHallway(determineALength(), determineNextCoordinates());
+
+        generateVerticalHallway(determineALength(), determineNextCoordinates());
+        generateHorizontalHallway(determineALength(), determineNextCoordinates());
+        generateVerticalHallway(determineALength(), determineNextCoordinates());
+        generateHorizontalHallway(determineALength(), determineNextCoordinates());
+        generateVerticalHallway(determineALength(), determineNextCoordinates());
+
+        generateVerticalHallway(determineALength(), determineNextCoordinates());
+        generateHorizontalHallway(determineALength(), determineNextCoordinates());
+        generateVerticalHallway(determineALength(), determineNextCoordinates());
+        generateHorizontalHallway(determineALength(), determineNextCoordinates());
+        generateVerticalHallway(determineALength(), determineNextCoordinates());
+
+        generateVerticalHallway(determineALength(), determineNextCoordinates());
+        generateHorizontalHallway(determineALength(), determineNextCoordinates());
+        generateVerticalHallway(determineALength(), determineNextCoordinates());
+        generateHorizontalHallway(determineALength(), determineNextCoordinates());
+        generateVerticalHallway(determineALength(), determineNextCoordinates());
+
 //
-//        for (int i = 0; i != 10; ++i) {
-//            double num = generator.nextDouble();
-//            System.out.println(num);
-//        }
+
+
+//
+
+
+
     }
 
 }
