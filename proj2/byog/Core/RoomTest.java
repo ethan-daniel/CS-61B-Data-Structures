@@ -13,12 +13,21 @@ public class RoomTest {
         System.out.println("Number of outer floor tiles: " + room.getNumOuterFloorTiles());
         System.out.println("Printing Room tiles: ");
         room.printRoomTiles();
+
         System.out.println("Printing outer-floor tiles: ");
-        room.printOuterFloorTiles();
+        room.printFloorTiles(room.getOuterFloorTiles());
+        System.out.println("Printing north floor tiles: ");
+        room.printFloorTiles(room.getNorthFloors());
+        System.out.println("Printing south floor tiles: ");
+        room.printFloorTiles(room.getSouthFloors());
+        System.out.println("Printing west floor tiles: ");
+        room.printFloorTiles(room.getWestFloors());
+        System.out.println("Printing east floor tiles: ");
+        room.printFloorTiles(room.getEastFloors());
 
         System.out.println("\n\n");
 
-        Room room2 = new Room(3, 3, 2, 2);
+        Room room2 = new Room(5, 5, 0, 0);
         System.out.println("Width: " + room2.getWidth());
         System.out.println("Height: " + room2.getHeight());
         System.out.println("Origin X Coordinate: " + room2.getOriginXCoordinate());
@@ -27,9 +36,17 @@ public class RoomTest {
         System.out.println("Size of room: " + room.getRoomTileSize());
         System.out.println("Number of outer floor tiles: " + room.getNumOuterFloorTiles());
         System.out.println("Printing Room tiles: ");
-        room2.printRoomTiles();
+
         System.out.println("Printing outer-floor tiles: ");
-        room2.printOuterFloorTiles();
+        room2.printFloorTiles(room2.getOuterFloorTiles());
+        System.out.println("Printing north floor tiles: ");
+        room2.printFloorTiles(room2.getNorthFloors());
+        System.out.println("Printing south floor tiles: ");
+        room2.printFloorTiles(room2.getSouthFloors());
+        System.out.println("Printing west floor tiles: ");
+        room2.printFloorTiles(room2.getWestFloors());
+        System.out.println("Printing east floor tiles: ");
+        room2.printFloorTiles(room2.getEastFloors());
 
 
     }

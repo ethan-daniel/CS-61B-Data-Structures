@@ -40,7 +40,7 @@ public class MapGeneratorTest {
         Room room = new Room(10, 15, 4, 4);
 
         Room hallway = new Room(3, 20, 7, 6);
-        Room hallway2 = new Room(3, 3, 30, 30);
+        Room hallway2 = new Room(4, 4, 30, 30);
 
         map.drawRectangularRoom(room);
         map.drawHallway(hallway);
@@ -58,7 +58,7 @@ public class MapGeneratorTest {
         MapGenerator map = new MapGenerator(50, 50);
 
         map.generateMap(10974);
-        System.out.println(map.getOuterFloorCoordinates());
+        System.out.println(map.getPlaceableFloorCoordinates());
 
 
         System.out.println("Num. Rooms: " + map.getNumRooms());
