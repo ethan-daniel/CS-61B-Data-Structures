@@ -55,16 +55,20 @@ public class MapGeneratorTest {
     }
 
     public static void TestMapRendering() {
-        MapGenerator map = new MapGenerator(50, 50);
+        MapGenerator map = new MapGenerator(20, 20);
 
-        map.generateMap(100);
+//        for (int i = 0; i != 2; ++i) {
+//            map.generateMap(i);
+//        }
+        //map.generateMap(10012);
+        map.generateMap(10010);
         //System.out.println(map.getPlaceableFloorCoordinates());
 
 
         System.out.println("Num. Rooms: " + map.getNumRooms());
         System.out.println("Num. Hallways: " + map.getNumHallways());
         TERenderer ter = new TERenderer();
-        ter.initialize(50, 50);
+        ter.initialize(20, 20);
         ter.renderFrame(map.getWorld());
     }
 

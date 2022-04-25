@@ -1,11 +1,8 @@
 package byog.Core;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
-
-import javax.sound.midi.SysexMessage;
 import java.util.Random;
 import java.lang.Math;
 
@@ -258,16 +255,17 @@ public class MapGenerator {
 //
     public Coordinates determineNextCoordinates() {
         Coordinates temp = placeableFloorCoordinates.get(generator.nextInt(placeableFloorCoordinates.size()));
-        placeableFloorCoordinatesRooms.remove(temp);
+        //placeableFloorCoordinatesRooms.remove(temp);
         int x = temp.getX();
         int y = temp.getY();
+
 
         return new Coordinates(x - 1, y - 1);
     }
 
     public Coordinates determineNextCoordinatesRoom() {
         Coordinates temp = placeableFloorCoordinatesRooms.get(generator.nextInt(placeableFloorCoordinatesRooms.size()));
-        placeableFloorCoordinatesRooms.remove(temp);
+        //placeableFloorCoordinatesRooms.remove(temp);
         int x = temp.getX();
         int y = temp.getY();
 
@@ -275,8 +273,26 @@ public class MapGenerator {
     }
 
     public void generateAllHallways() {
-        while (getNumHorizontalHallways() != total_horizontal_hallways ||
-        getNumVerticalHallways() != total_vertical_hallways) {
+        while (getNumHorizontalHallways() <= total_horizontal_hallways ||
+        getNumVerticalHallways() <= total_vertical_hallways) {
+            System.out.println("get h: " + getNumHorizontalHallways()
+            + "total h: " + total_horizontal_hallways);
+
+            System.out.println("get v: " + getNumVerticalHallways()
+                    + "total v: " + total_vertical_hallways);
+
+            if (getNumHorizontalHallways() != total_horizontal_hallways) {
+                generateVerticalHallway(determineALength(), determineNextCoordinates());
+            }
+            if (getNumVerticalHallways() != total_vertical_hallways){
+                generateHorizontalHallway(determineALength(), determineNextCoordinates());
+            }
+        }
+    }
+
+    public void generateAllRooms() {
+        while (getNumRooms() != total_rooms) {
+            generateRectangularRoom(determineALength(), determineALength(), determineNextCoordinatesRoom());
 
         }
     }
@@ -288,97 +304,23 @@ public class MapGenerator {
         System.out.println();
     }
 
-    public void generateMap(long seed) {
-        this.seed = seed;
+    public void initMap(long input) {
+        this.seed = input;
         generator = new Random(this.seed);
+        placeableFloorCoordinatesRooms.clear();
+        placeableFloorCoordinatesRooms.clear();
+        roomList.clear();
+        hallwayList.clear();
+        horizontalHallwayList.clear();
+        verticalHallwayList.clear();
+    }
+
+    public void generateMap(long seed) {
+        initMap(seed);
         determineNumRoomsAndHallways();
-        Coordinates start = determineStartingCoordinates();
-        start.print();
-
-        generateHorizontalHallway(determineALength(), start);
-        generateVerticalHallway(determineALength(), determineNextCoordinates());
-        generateHorizontalHallway(determineALength(), determineNextCoordinates());
-        generateVerticalHallway(determineALength(), determineNextCoordinates());
-        generateHorizontalHallway(determineALength(), determineNextCoordinates());
-        generateVerticalHallway(determineALength(), determineNextCoordinates());
-
-        //printArrayListTiles(placeableFloorCoordinates);
-//
-        generateVerticalHallway(determineALength(), determineNextCoordinates());
-        generateHorizontalHallway(determineALength(), determineNextCoordinates());
-        generateVerticalHallway(determineALength(), determineNextCoordinates());
-        generateHorizontalHallway(determineALength(), determineNextCoordinates());
-        generateVerticalHallway(determineALength(), determineNextCoordinates());
-//
-        generateVerticalHallway(determineALength(), determineNextCoordinates());
-        generateHorizontalHallway(determineALength(), determineNextCoordinates());
-        generateVerticalHallway(determineALength(), determineNextCoordinates());
-        generateHorizontalHallway(determineALength(), determineNextCoordinates());
-        generateVerticalHallway(determineALength(), determineNextCoordinates());
-//
-        generateVerticalHallway(determineALength(), determineNextCoordinates());
-        generateHorizontalHallway(determineALength(), determineNextCoordinates());
-        generateVerticalHallway(determineALength(), determineNextCoordinates());
-        generateHorizontalHallway(determineALength(), determineNextCoordinates());
-        generateVerticalHallway(determineALength(), determineNextCoordinates());
-
-        generateVerticalHallway(determineALength(), determineNextCoordinates());
-        generateHorizontalHallway(determineALength(), determineNextCoordinates());
-        generateVerticalHallway(determineALength(), determineNextCoordinates());
-        generateHorizontalHallway(determineALength(), determineNextCoordinates());
-        generateVerticalHallway(determineALength(), determineNextCoordinates());
-//
-        generateVerticalHallway(determineALength(), determineNextCoordinates());
-        generateHorizontalHallway(determineALength(), determineNextCoordinates());
-        generateVerticalHallway(determineALength(), determineNextCoordinates());
-        generateHorizontalHallway(determineALength(), determineNextCoordinates());
-        generateVerticalHallway(determineALength(), determineNextCoordinates());
-
-        generateVerticalHallway(determineALength(), determineNextCoordinates());
-        generateHorizontalHallway(determineALength(), determineNextCoordinates());
-        generateVerticalHallway(determineALength(), determineNextCoordinates());
-        generateHorizontalHallway(determineALength(), determineNextCoordinates());
-        generateVerticalHallway(determineALength(), determineNextCoordinates());
-
-        generateVerticalHallway(determineALength(), determineNextCoordinates());
-        generateHorizontalHallway(determineALength(), determineNextCoordinates());
-        generateVerticalHallway(determineALength(), determineNextCoordinates());
-        generateHorizontalHallway(determineALength(), determineNextCoordinates());
-        generateVerticalHallway(determineALength(), determineNextCoordinates());
-//
-        generateVerticalHallway(determineALength(), determineNextCoordinates());
-        generateHorizontalHallway(determineALength(), determineNextCoordinates());
-        generateVerticalHallway(determineALength(), determineNextCoordinates());
-        generateHorizontalHallway(determineALength(), determineNextCoordinates());
-        generateVerticalHallway(determineALength(), determineNextCoordinates());
-
-        generateVerticalHallway(determineALength(), determineNextCoordinates());
-        generateHorizontalHallway(determineALength(), determineNextCoordinates());
-        generateVerticalHallway(determineALength(), determineNextCoordinates());
-        generateHorizontalHallway(determineALength(), determineNextCoordinates());
-        generateVerticalHallway(determineALength(), determineNextCoordinates());
-
-        generateVerticalHallway(determineALength(), determineNextCoordinates());
-        generateHorizontalHallway(determineALength(), determineNextCoordinates());
-        generateVerticalHallway(determineALength(), determineNextCoordinates());
-        generateHorizontalHallway(determineALength(), determineNextCoordinates());
-        generateVerticalHallway(determineALength(), determineNextCoordinates());
-
-//
-        while (getNumRooms() != total_rooms) {
-            generateRectangularRoom(determineALength(), determineALength(), determineNextCoordinatesRoom());
-
-        }
-//        generateRectangularRoom(determineALength(), determineALength(), determineNextCoordinatesRoom());
-//        generateRectangularRoom(determineALength(), determineALength(), determineNextCoordinatesRoom());
-//        generateRectangularRoom(determineALength(), determineALength(), determineNextCoordinatesRoom());
-//        generateRectangularRoom(determineALength(), determineALength(), determineNextCoordinatesRoom());
-//        generateRectangularRoom(determineALength(), determineALength(), determineNextCoordinatesRoom());
-//        generateRectangularRoom(determineALength(), determineALength(), determineNextCoordinatesRoom());
-//
-
-
-
+        generateHorizontalHallway(determineALength(), determineStartingCoordinates());
+        generateAllHallways();
+        generateAllRooms();
     }
 
 }
