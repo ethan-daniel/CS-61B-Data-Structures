@@ -177,7 +177,7 @@ public class MapGenerator {
      * Note: There will be at least one room and two hallways. */
     public void determineNumRoomsAndHallways() {
         int area = WORLD_WIDTH * WORLD_HEIGHT;
-        int max_rooms = (int) (Math.sqrt(area) / 3);
+        int max_rooms = (int) (Math.sqrt(area) / 4);
         int max_horizontal_hallways = (int) (max_rooms * (1 + generator.nextDouble()));
         int max_vertical_hallways = (int) (max_rooms * (1 + generator.nextDouble()));
         this.total_rooms = generator.nextInt(max_rooms - 2 + 1) + 2;

@@ -3,6 +3,8 @@ package byog.Core;
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
 
+import javax.sound.midi.SysexMessage;
+
 public class Game {
     TERenderer ter = new TERenderer();
     /* Feel free to change the width and height. */
@@ -31,8 +33,22 @@ public class Game {
         // TODO: Fill out this method to run the game using the input passed in,
         // and return a 2D tile representation of the world that would have been
         // drawn if the same inputs had been given to playWithKeyboard().
+        char first_char = input.charAt(0);
+        String menu_option = ("" + first_char).toLowerCase();
+        long seed = Long.parseLong(input.replaceAll("\\D", ""));
+        String seed_string = "" + seed;
+        String keyboard_input = input.substring(menu_option.length() + seed_string.length());
 
-        TETile[][] finalWorldFrame = null;
+        MapGenerator map = new MapGenerator(WIDTH, HEIGHT);
+        ter.initialize(WIDTH, HEIGHT);
+
+        if (menu_option.equals("n")) {
+            map.generateMap(seed);
+        }
+
+
+        TETile[][] finalWorldFrame = map.getWorld();
+        ter.renderFrame(finalWorldFrame);
         return finalWorldFrame;
     }
 }
