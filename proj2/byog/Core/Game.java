@@ -2,8 +2,7 @@ package byog.Core;
 
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
-
-import javax.sound.midi.SysexMessage;
+import edu.princeton.cs.introcs.StdDraw;
 
 public class Game {
     TERenderer ter = new TERenderer();
@@ -40,7 +39,6 @@ public class Game {
         String keyboard_input = input.substring(menu_option.length() + seed_string.length());
 
         MapGenerator map = new MapGenerator(WIDTH, HEIGHT);
-        ter.initialize(WIDTH, HEIGHT);
 
         if (menu_option.equals("n")) {
             map.generateMap(seed);
@@ -48,7 +46,6 @@ public class Game {
 
 
         TETile[][] finalWorldFrame = map.getWorld();
-        ter.renderFrame(finalWorldFrame);
         return finalWorldFrame;
     }
 }
