@@ -1,12 +1,11 @@
 package byog.Core;
 
 import byog.TileEngine.TERenderer;
-import byog.TileEngine.TETile;
 
 public class MapGeneratorTest {
 
     /** Light test of MapGenerator's constructor, as well as some get() methods. */
-    public static void TestConstructor() {
+    public static void testConstructor() {
         MapGenerator map = new MapGenerator(50, 50);
         System.out.println("Width: " + map.getWidth());
         System.out.println("Height: " + map.getHeight());
@@ -17,7 +16,7 @@ public class MapGeneratorTest {
 
     /** Visual test of drawing rectangular rooms. Room 1 and 3 should appear on the map
      * and room 2 should not since it would overlap room 1. */
-    public static void TestRectangularRoomRendering() {
+    public static void testRectangularRoomRendering() {
         MapGenerator map = new MapGenerator(50, 50);
         Room room = new Room(10, 10, 4, 4);
         Room room2 = new Room(10, 10, 0, 0);
@@ -35,7 +34,7 @@ public class MapGeneratorTest {
     }
 
     /** Visual test of drawing hallways near a rectangular room. */
-    public static void TestHallwayRendering() {
+    public static void testHallwayRendering() {
         MapGenerator map = new MapGenerator(50, 50);
         Room room = new Room(10, 15, 4, 4);
 
@@ -54,7 +53,7 @@ public class MapGeneratorTest {
 
     }
 
-    public static void TestMapRendering() {
+    public static void testMapRendering() {
         MapGenerator map = new MapGenerator(80, 30);
         map.generateMap(9223372036854775807L);
 
@@ -66,10 +65,10 @@ public class MapGeneratorTest {
     }
 
     public static void main(String[] args) {
-//        TestConstructor();
-//        TestRectangularRoomRendering();
-        //TestHallwayRendering();
-        TestMapRendering();
+//        testConstructor();
+//        testRectangularRoomRendering();
+        //testHallwayRendering();
+        testMapRendering();
     }
 
 

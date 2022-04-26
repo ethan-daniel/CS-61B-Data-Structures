@@ -1,7 +1,7 @@
 package byog.Core;
 
 public class GameTest {
-    public static void TestPlayWithInputString() {
+    public static void testPlayWithInputString() {
         Game game = new Game();
         //game.playWithInputString("N12345S");
 
@@ -9,6 +9,6 @@ public class GameTest {
     }
 
     public static void main(String[] args) {
-        TestPlayWithInputString();
+        testPlayWithInputString();
     }
 }

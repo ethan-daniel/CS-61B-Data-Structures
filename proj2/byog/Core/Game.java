@@ -2,7 +2,6 @@ package byog.Core;
 
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
-import edu.princeton.cs.introcs.StdDraw;
 
 public class Game {
     TERenderer ter = new TERenderer();
@@ -29,18 +28,18 @@ public class Game {
      * @return the 2D TETile[][] representing the state of the world
      */
     public TETile[][] playWithInputString(String input) {
-        // TODO: Fill out this method to run the game using the input passed in,
+        // Fill out this method to run the game using the input passed in,
         // and return a 2D tile representation of the world that would have been
         // drawn if the same inputs had been given to playWithKeyboard().
-        char first_char = input.charAt(0);
-        String menu_option = ("" + first_char).toLowerCase();
+        char firstChar = input.charAt(0);
+        String menuOption = ("" + firstChar).toLowerCase();
         long seed = Long.parseLong(input.replaceAll("\\D", ""));
-        String seed_string = "" + seed;
-        String keyboard_input = input.substring(menu_option.length() + seed_string.length());
+        String seedString = "" + seed;
+        String keyboardInput = input.substring(menuOption.length() + seedString.length());
 
         MapGenerator map = new MapGenerator(WIDTH, HEIGHT);
 
-        if (menu_option.equals("n")) {
+        if (menuOption.equals("n")) {
             map.generateMap(seed);
         }
 

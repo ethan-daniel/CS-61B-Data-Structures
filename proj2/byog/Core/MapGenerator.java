@@ -4,17 +4,16 @@ import java.util.ArrayList;
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
 import java.util.Random;
-import java.lang.Math;
 
 public class MapGenerator {
     public static final TETile FLOOR = Tileset.FLOOR;
     private final TETile[][] world;
     private int WORLD_WIDTH;
     private int WORLD_HEIGHT;
-    private int total_rooms;
-    private int total_hallways;
-    private int total_horizontal_hallways;
-    private int total_vertical_hallways;
+    private int totalRooms;
+    private int totalHallways;
+    private int totalHorizontalHallways;
+    private int totalVerticalHallways;
     private long seed;
     private Random generator;
     private final ArrayList<Coordinates> placeableFloorCoordinates = new ArrayList<>();
@@ -75,7 +74,7 @@ public class MapGenerator {
      * Floor textures. */
     private void drawRoom(Room room) {
         for (Coordinates coor : room.getRoomTiles().keySet()) {
-            if (world[coor.getX()][coor.getY()] != FLOOR){
+            if (world[coor.getX()][coor.getY()] != FLOOR) {
                 world[coor.getX()][coor.getY()] = room.getRoomTiles().get(coor);
             }
         }
@@ -85,12 +84,12 @@ public class MapGenerator {
      * This will NOT allow a room to be placed outside the bounds of the world.
      * */
     private boolean isPlaceableRoom(Room room) {
-        if ((room.getOriginYCoordinate() + room.getHeight()) > WORLD_HEIGHT ||
-                (room.getOriginXCoordinate() + room.getWidth()) > WORLD_WIDTH) {
+        if ((room.getOriginYCoordinate() + room.getHeight()) > WORLD_HEIGHT
+                || (room.getOriginXCoordinate() + room.getWidth()) > WORLD_WIDTH) {
             return false;
         }
-        if (room.getOriginYCoordinate() < 0 ||
-                room.getOriginXCoordinate() < 0) {
+        if (room.getOriginYCoordinate() < 0
+                || room.getOriginXCoordinate() < 0) {
             return false;
         }
 
@@ -100,10 +99,10 @@ public class MapGenerator {
     /** Checks if room overlaps.
      * This will NOT allow a room to be placed on another room. */
     private boolean overlapsRoom(Room room) {
-        for (Room existing_room : roomList) {
-            for (Coordinates coordinates_key_e : existing_room.getRoomTiles().keySet()) {
-                for (Coordinates coordinates_key_g : room.getRoomTiles().keySet()) {
-                    if (coordinates_key_e.equals(coordinates_key_g)) {
+        for (Room existingRoom : roomList) {
+            for (Coordinates coordinatesKeyE : existingRoom.getRoomTiles().keySet()) {
+                for (Coordinates coordinatesKeyG : room.getRoomTiles().keySet()) {
+                    if (coordinatesKeyE.equals(coordinatesKeyG)) {
                         return true;
                     }
                 }
@@ -115,7 +114,7 @@ public class MapGenerator {
 
     /** Attempts to draw a rectangular room. */
     public void drawRectangularRoom(Room room) {
-        if (!isPlaceableRoom(room) || overlapsRoom(room)){
+        if (!isPlaceableRoom(room) || overlapsRoom(room)) {
             return;
         }
         drawRoom(room);
@@ -125,7 +124,7 @@ public class MapGenerator {
     /** Attempts to draw a hallway.
      * Will draw one on either end of the current hallway generation. */
     public void drawHallway(Room room) {
-        if (!isPlaceableRoom(room)){
+        if (!isPlaceableRoom(room)) {
             return;
         }
         drawRoom(room);
@@ -148,8 +147,7 @@ public class MapGenerator {
         hallwayList.add(room);
         if (room.getWidth() == 3) {
             verticalHallwayList.add(room);
-        }
-        else {
+        } else {
             horizontalHallwayList.add(room);
         }
     }
@@ -177,13 +175,13 @@ public class MapGenerator {
      * Note: There will be at least one room and two hallways. */
     public void determineNumRoomsAndHallways() {
         int area = WORLD_WIDTH * WORLD_HEIGHT;
-        int max_rooms = (int) (Math.sqrt(area) / 4);
-        int max_horizontal_hallways = (int) (max_rooms * (1 + generator.nextDouble()));
-        int max_vertical_hallways = (int) (max_rooms * (1 + generator.nextDouble()));
-        this.total_rooms = generator.nextInt(max_rooms - 2 + 1) + 2;
-        this.total_horizontal_hallways = generator.nextInt(max_horizontal_hallways - 2 + 1) + 2;
-        this.total_vertical_hallways = generator.nextInt(max_vertical_hallways - 2 + 1) + 2;
-        this.total_hallways = this.total_horizontal_hallways + this.total_vertical_hallways;
+        int maxRooms = (int) (Math.sqrt(area) / 4);
+        int maxHorizontalHallways = (int) (maxRooms * (1 + generator.nextDouble()));
+        int maxVerticalHallways = (int) (maxRooms * (1 + generator.nextDouble()));
+        this.totalRooms = generator.nextInt(maxRooms - 2 + 1) + 2;
+        this.totalHorizontalHallways = generator.nextInt(maxHorizontalHallways - 2 + 1) + 2;
+        this.totalVerticalHallways = generator.nextInt(maxVerticalHallways - 2 + 1) + 2;
+        this.totalHallways = this.totalHorizontalHallways + this.totalVerticalHallways;
     }
 
     /** Uses the given seed to determine the starting coordinates of the
@@ -208,14 +206,18 @@ public class MapGenerator {
 
     /** Used to determine coordinates for hallways. */
     public Coordinates determineNextCoordinates() {
-        Coordinates temp = placeableFloorCoordinates.get(generator.nextInt(placeableFloorCoordinates.size()));
+        Coordinates temp =
+                placeableFloorCoordinates.get(generator
+                        .nextInt(placeableFloorCoordinates.size()));
 
         return new Coordinates(temp.getX() - 1, temp.getY() - 1);
     }
 
     /** Used to determine coordinates for rooms. */
     public Coordinates determineNextCoordinatesRoom() {
-        Coordinates temp = placeableFloorCoordinatesRooms.get(generator.nextInt(placeableFloorCoordinatesRooms.size()));
+        Coordinates temp =
+                placeableFloorCoordinatesRooms.get(generator
+                        .nextInt(placeableFloorCoordinatesRooms.size()));
 
         return new Coordinates(temp.getX() - 1, temp.getY() - 1);
     }
@@ -225,12 +227,12 @@ public class MapGenerator {
      * size and coordinates until that hallway fits. If that does not work, then it will
      * only try to generate a hallway a certain number of times. */
     public void generateAllHallways() {
-        int i = (int)(getWidth() + getHeight() / 1.5);
-        while (getNumHallways() != total_hallways && i != 0) {
-            if (getNumHorizontalHallways() != total_horizontal_hallways) {
+        int i = (int) (getWidth() + getHeight() / 1.5);
+        while (getNumHallways() != totalHallways && i != 0) {
+            if (getNumHorizontalHallways() != totalHorizontalHallways) {
                 generateVerticalHallway(determineALength(), determineNextCoordinates());
             }
-            if (getNumVerticalHallways() != total_vertical_hallways){
+            if (getNumVerticalHallways() != totalVerticalHallways) {
                 generateHorizontalHallway(determineALength(), determineNextCoordinates());
             }
             --i;
@@ -242,16 +244,17 @@ public class MapGenerator {
      * size and coordinates until that room fits. If that does not work, then it will
      * only try to generate a rectangular room a certain number of times. */
     public void generateAllRooms() {
-        int i = (int)(getWidth() + getHeight() / 1.5);
-        while (getNumRooms() != total_rooms && i != 0) {
-            generateRectangularRoom(determineALength(), determineALength(), determineNextCoordinatesRoom());
+        int i = (int) (getWidth() + getHeight() / 1.5);
+        while (getNumRooms() != totalRooms && i != 0) {
+            generateRectangularRoom(determineALength(), determineALength(),
+                    determineNextCoordinatesRoom());
             --i;
         }
     }
 
     /** Used to print the coordinates in a list. */
-    public void printArrayListTiles(ArrayList<Coordinates> c_list) {
-        for (Coordinates coor : c_list) {
+    public void printArrayListTiles(ArrayList<Coordinates> cList) {
+        for (Coordinates coor : cList) {
             System.out.print("(" + coor.getX() + ", " + coor.getY() + "), ");
         }
         System.out.println();
@@ -270,8 +273,8 @@ public class MapGenerator {
     }
 
     /** Used to create a map of a given seed. */
-    public void generateMap(long seed) {
-        initMap(seed);
+    public void generateMap(long inputSeed) {
+        initMap(inputSeed);
         determineNumRoomsAndHallways();
         generateHorizontalHallway(determineALength(), determineStartingCoordinates());
         generateAllHallways();

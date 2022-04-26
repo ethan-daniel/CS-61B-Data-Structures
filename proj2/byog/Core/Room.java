@@ -12,52 +12,55 @@ public class Room {
     private static final TETile FLOOR = Tileset.FLOOR;
     private int width;
     private int height;
-    private int origin_x_coordinate;
-    private int origin_y_coordinate;
+    private int originXCoordinate;
+    private int originYCoordinate;
     private boolean isHallway = false;
     private Map<Coordinates, TETile> roomTiles = new HashMap<>();
     private ArrayList<Coordinates> hallwayEnds = new ArrayList<>();
 
-    /** Room constructor. Assigns object variables with given arguments, and initializes the room's tiles.
+    /** Room constructor. Assigns object variables with given arguments,
+     * and initializes the room's tiles.
      * Also adds outer floor tiles to a list.
      * Note: A room must have at least height and width 3. */
-    Room(int width, int height, int origin_x_coordinate, int origin_y_coordinate) {
+    Room(int width, int height, int originXCoordinate, int originYCoordinate) {
         this.width = width;
         this.height = height;
-        this.origin_x_coordinate = origin_x_coordinate;
-        this.origin_y_coordinate = origin_y_coordinate;
+        this.originXCoordinate = originXCoordinate;
+        this.originYCoordinate = originYCoordinate;
 
         if (this.width == 3 || this.height == 3) {
             setHallwayProperties();
         }
 
         // Adding all room tiles and textures.
-        setRoomTiles(origin_x_coordinate, origin_y_coordinate, width, WALL);
-        for (int y = origin_y_coordinate + 1; y != origin_y_coordinate + height - 1; ++y) {
-            setRoomTiles(origin_x_coordinate, y, 1, WALL);
-            setRoomTiles(origin_x_coordinate + 1, y, width - 2, FLOOR);
-            setRoomTiles(origin_x_coordinate + width - 1, y, 1, WALL);
+        setRoomTiles(originXCoordinate, originYCoordinate, width, WALL);
+        for (int y = originYCoordinate + 1; y != originYCoordinate + height - 1; ++y) {
+            setRoomTiles(originXCoordinate, y, 1, WALL);
+            setRoomTiles(originXCoordinate + 1, y, width - 2, FLOOR);
+            setRoomTiles(originXCoordinate + width - 1, y, 1, WALL);
         }
-        setRoomTiles(origin_x_coordinate, origin_y_coordinate + height - 1, width, WALL);
+        setRoomTiles(originXCoordinate, originYCoordinate + height - 1, width, WALL);
     }
 
     private void setHallwayProperties() {
         isHallway = true;
         if (this.height == 3) {
-            hallwayEnds.add(new Coordinates(origin_x_coordinate + 1, origin_y_coordinate + 1));
-            hallwayEnds.add(new Coordinates(origin_x_coordinate + width - 2, origin_y_coordinate + 1));
-        }
-
-        else if (this.width == 3) {
-            hallwayEnds.add(new Coordinates(origin_x_coordinate + 1, origin_y_coordinate + 1));
-            hallwayEnds.add(new Coordinates(origin_x_coordinate + 1, origin_y_coordinate + height - 2));
+            hallwayEnds.add(new Coordinates(originXCoordinate + 1,
+                    originYCoordinate + 1));
+            hallwayEnds.add(new Coordinates(originXCoordinate + width - 2,
+                    originYCoordinate + 1));
+        } else if (this.width == 3) {
+            hallwayEnds.add(new Coordinates(originXCoordinate + 1,
+                    originYCoordinate + 1));
+            hallwayEnds.add(new Coordinates(originXCoordinate + 1,
+                    originYCoordinate + height - 2));
         }
     }
 
     /** Assigns tile textures with coordinates. */
-    private void setRoomTiles(int x_coordinate, int y_coordinate, int len, TETile texture) {
-        for (int x = x_coordinate; x != x_coordinate + len; ++x) {
-            roomTiles.put(new Coordinates(x, y_coordinate), texture);
+    private void setRoomTiles(int xCoordinate, int yCoordinate, int len, TETile texture) {
+        for (int x = xCoordinate; x != xCoordinate + len; ++x) {
+            roomTiles.put(new Coordinates(x, yCoordinate), texture);
         }
     }
 
@@ -73,12 +76,12 @@ public class Room {
 
     /** Returns the room's originating x coordinate. */
     public int getOriginXCoordinate() {
-        return origin_x_coordinate;
+        return originXCoordinate;
     }
 
     /** Returns the room's originating y coordinate. */
     public int getOriginYCoordinate() {
-        return origin_y_coordinate;
+        return originYCoordinate;
     }
 
     /** Returns true if the room is a hallway. */
@@ -106,24 +109,23 @@ public class Room {
     }
 
     /** Prints all coordinates and their texture. */
-    public void printHashMapTiles(Map<Coordinates, TETile> c_map) {
-        for (Coordinates coor : c_map.keySet()){
-            String tile_str = "";
-            if (c_map.get(coor) == FLOOR) {
-                tile_str = "FLOOR";
-            }
-            else if (c_map.get(coor) == WALL) {
-                tile_str = "WALL";
+    public void printHashMapTiles(Map<Coordinates, TETile> cMap) {
+        for (Coordinates coor : cMap.keySet()) {
+            String tileStr = "";
+            if (cMap.get(coor) == FLOOR) {
+                tileStr = "FLOOR";
+            } else if (cMap.get(coor) == WALL) {
+                tileStr = "WALL";
             }
             System.out.print("[(" + coor.getX() + ", " + coor.getY() + ") = "
-                    + tile_str + "], ");
+                    + tileStr + "], ");
         }
         System.out.println();
     }
 
     /** Prints all outer floor tiles. */
-    public void printArrayListTiles(ArrayList<Coordinates> c_list) {
-        for (Coordinates coor : c_list) {
+    public void printArrayListTiles(ArrayList<Coordinates> cList) {
+        for (Coordinates coor : cList) {
             System.out.print("(" + coor.getX() + ", " + coor.getY() + "), ");
         }
         System.out.println();

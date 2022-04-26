@@ -2,7 +2,7 @@ package byog.Core;
 
 public class RoomTest {
     /** Light test of Room's constructor, as well as some get() and print methods. */
-    public static void TestConstructor() {
+    public static void testConstructor() {
         Room room = new Room(6, 6, 0, 0);
         System.out.println("Width: " + room.getWidth());
         System.out.println("Height: " + room.getHeight());
@@ -40,6 +40,6 @@ public class RoomTest {
     }
 
     public static void main(String[] args) {
-        TestConstructor();
+        testConstructor();
     }
 }
