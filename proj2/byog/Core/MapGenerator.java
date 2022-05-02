@@ -70,6 +70,11 @@ public class MapGenerator {
         return verticalHallwayList.size();
     }
 
+    /** Returns the list of all rooms in the map. */
+    public ArrayList<Room> getRoomList() {
+        return roomList;
+    }
+
     /** Draws a room on the world, and forbids Wall textures from overwriting
      * Floor textures. */
     private void drawRoom(Room room) {
