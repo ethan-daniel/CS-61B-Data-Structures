@@ -16,7 +16,7 @@ public class WorldStateTest {
     }
 
     public static void testInputStringPlayer() {
-        WorldState world = new WorldState(9223372036854775807L, 80, 30);
+        World world = new World(9223372036854775807L, 80, 30);
         world.movePlayer("wdddddddds");
 
         TERenderer ter = new TERenderer();

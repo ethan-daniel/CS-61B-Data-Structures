@@ -3,11 +3,12 @@ package byog.Core;
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Room {
+public class Room implements Serializable {
     private static final TETile WALL = Tileset.WALL;
     private static final TETile FLOOR = Tileset.FLOOR;
     private int width;

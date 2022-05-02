@@ -3,11 +3,14 @@ package byog.Core;
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
 
+import java.io.*;
+
 public class Game {
     TERenderer ter = new TERenderer();
     /* Feel free to change the width and height. */
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
+    private static String fileName = "worldSave.bin";
 
     /**
      * Method used for playing a fresh game. The game should start from the main menu.
@@ -33,18 +36,63 @@ public class Game {
         // drawn if the same inputs had been given to playWithKeyboard().
         char firstChar = input.charAt(0);
         String menuOption = ("" + firstChar).toLowerCase();
-        long seed = Long.parseLong(input.replaceAll("\\D", ""));
-        String seedString = "" + seed;
-        String keyboardInput = input.substring(menuOption.length() + seedString.length());
-
-        MapGenerator map = new MapGenerator(WIDTH, HEIGHT);
+        TETile[][] finalWorldFrame = null;
 
         if (menuOption.equals("n")) {
-            map.generateMap(seed);
+            long seed = Long.parseLong(input.replaceAll("\\D", ""));
+            String seedString = "" + seed;
+            String keyboardInput = input.substring(menuOption.length() + seedString.length());
+            World world = new World(seed, WIDTH, HEIGHT);;
+            world.movePlayer(keyboardInput);
+            finalWorldFrame = world.getWorld();
+            if (input.substring(input.length() - 2).toLowerCase().equals(":q")) {
+                saveWorld(world);
+            }
+
+        } else if (menuOption.equals("l")) {
+            String keyboardInput = input.substring(menuOption.length());
+            World world = loadWorld();
+            if (world != null) {
+                world.movePlayer(keyboardInput);
+                finalWorldFrame = world.getWorld();
+            }
+            if (input.substring(input.length() - 2).toLowerCase().equals(":q")) {
+                saveWorld(world);
+            }
         }
 
-
-        TETile[][] finalWorldFrame = map.getWorld();
         return finalWorldFrame;
     }
+
+    public void saveWorld(World world) {
+        try {
+            ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(fileName));
+            os.writeObject(world);
+            os.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public World loadWorld() {
+        try {
+            ObjectInputStream is = new ObjectInputStream(new FileInputStream(fileName));
+            World world = (World) is.readObject();
+            is.close();
+            return world;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+
+
 }

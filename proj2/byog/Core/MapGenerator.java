@@ -1,11 +1,13 @@
 package byog.Core;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
+
 import java.util.Random;
 
-public class MapGenerator {
+public class MapGenerator implements Serializable {
     public static final TETile FLOOR = Tileset.FLOOR;
     private final TETile[][] world;
     private int WORLD_WIDTH;

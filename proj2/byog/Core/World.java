@@ -3,11 +3,12 @@ package byog.Core;
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
 
-public class WorldState {
+public class World implements Serializable {
     public static final TETile PLAYER = Tileset.PLAYER;
     public static final TETile FLOOR = Tileset.FLOOR;
     private Random generator;
@@ -15,7 +16,7 @@ public class WorldState {
     private MapGenerator map;
     private Player player;
 
-    public class Player {
+    public class Player implements Serializable{
         private Coordinates position;
         private ArrayList<Coordinates> allRoomCoordinates = new ArrayList<>();
 
@@ -69,7 +70,7 @@ public class WorldState {
 
     }
 
-    WorldState(long seed, int width, int height) {
+    World(long seed, int width, int height) {
         this.map = new MapGenerator(width, height);
         map.generateMap(seed);
         world = map.getWorld();
