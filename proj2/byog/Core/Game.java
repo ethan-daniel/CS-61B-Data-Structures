@@ -1,17 +1,22 @@
 package byog.Core;
 
-import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.FileInputStream;
 
-import java.io.*;
 
-public class Game {
-    TERenderer ter = new TERenderer();
+public class Game implements Serializable {
     /* Feel free to change the width and height. */
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
     //private static String fileName = "./worldSave.bin";
-    public static File f = new File("./worldSave.bin");
+    private static final File F = new File("worldSave.bin");
 
     /**
      * Method used for playing a fresh game. The game should start from the main menu.
@@ -39,14 +44,16 @@ public class Game {
         String menuOption = ("" + firstChar).toLowerCase();
         TETile[][] finalWorldFrame = null;
 
+        boolean existsQ = input.substring(input.length() - 2).toLowerCase().equals(":q");
+
         if (menuOption.equals("n")) {
             long seed = Long.parseLong(input.replaceAll("\\D", ""));
             String seedString = "" + seed;
             String keyboardInput = input.substring(menuOption.length() + seedString.length());
-            World world = new World(seed, WIDTH, HEIGHT);;
+            World world = new World(seed, WIDTH, HEIGHT);
             world.movePlayer(keyboardInput);
             finalWorldFrame = world.getWorld();
-            if (input.substring(input.length() - 2).toLowerCase().equals(":q")) {
+            if (existsQ) {
                 saveWorld(world);
             }
 
@@ -57,7 +64,7 @@ public class Game {
                 world.movePlayer(keyboardInput);
                 finalWorldFrame = world.getWorld();
             }
-            if (input.substring(input.length() - 2).toLowerCase().equals(":q")) {
+            if (existsQ) {
                 saveWorld(world);
             }
         }
@@ -67,29 +74,27 @@ public class Game {
 
     public void saveWorld(World world) {
         try {
-            ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(f));
+            ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(F));
             os.writeObject(world);
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            System.out.println("SAVE WORLD: FileNotFoundException");
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("SAVE WORLD: IOException");
         }
     }
-
     public World loadWorld() {
-        if (f.exists()){
+        if (F.exists()) {
             try {
-                ObjectInputStream is = new ObjectInputStream(new FileInputStream(f));
-                World world = (World) is.readObject();
-                return world;
+                ObjectInputStream is = new ObjectInputStream(new FileInputStream(F));
+                return (World) is.readObject();
             } catch (FileNotFoundException e) {
-                e.printStackTrace();
+                System.out.println("LOAD WORLD: FileNotFoundException");
                 System.exit(1);
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println("LOAD WORLD: IOException");
                 System.exit(1);
             } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+                System.out.println("LOAD WORLD: ClassNotFoundException");
                 System.exit(1);
             }
         }

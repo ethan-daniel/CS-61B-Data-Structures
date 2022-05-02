@@ -11,16 +11,15 @@ import java.util.Random;
 public class World implements Serializable {
     public static final TETile PLAYER = Tileset.PLAYER;
     public static final TETile FLOOR = Tileset.FLOOR;
-    private Random generator;
-    private TETile[][] world;
-    private MapGenerator map;
-    private Player player;
+    private final TETile[][] world;
+    private final MapGenerator map;
+    private final Player player;
 
-    public class Player implements Serializable{
+    public class Player implements Serializable {
         private Coordinates position;
-        private ArrayList<Coordinates> allRoomCoordinates = new ArrayList<>();
 
         public Player(long seed) {
+            ArrayList<Coordinates> allRoomCoordinates = new ArrayList<>();
             for (Room existingRoom : map.getRoomList()) {
                 for (Coordinates coor : existingRoom.getRoomTiles().keySet()) {
                     if (existingRoom.getRoomTiles().get(coor).equals(FLOOR)) {
@@ -29,7 +28,7 @@ public class World implements Serializable {
                 }
             }
 
-            generator = new Random(seed);
+            Random generator = new Random(seed);
             int index = generator.nextInt(allRoomCoordinates.size());
             position = allRoomCoordinates.get(index);
             world[position.getX()][position.getY()] = PLAYER;
@@ -41,9 +40,9 @@ public class World implements Serializable {
         private void updatePosition(int changeX, int changeY) {
             Coordinates updatedPosition = new Coordinates(position.getX() + changeX,
                     position.getY() + changeY);
-        if (!canUpdatePosition(updatedPosition)) {
-            return;
-        }
+            if (!canUpdatePosition(updatedPosition)) {
+                return;
+            }
             world[position.getX()][position.getY()] = FLOOR;
             position = updatedPosition;
             world[position.getX()][position.getY()] = PLAYER;
