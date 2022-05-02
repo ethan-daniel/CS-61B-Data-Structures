@@ -10,7 +10,8 @@ public class Game {
     /* Feel free to change the width and height. */
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
-    private static String fileName = "worldSave.bin";
+    //private static String fileName = "./worldSave.bin";
+    public static File f = new File("./worldSave.bin");
 
     /**
      * Method used for playing a fresh game. The game should start from the main menu.
@@ -66,9 +67,8 @@ public class Game {
 
     public void saveWorld(World world) {
         try {
-            ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(fileName));
+            ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(f));
             os.writeObject(world);
-            os.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -77,17 +77,21 @@ public class Game {
     }
 
     public World loadWorld() {
-        try {
-            ObjectInputStream is = new ObjectInputStream(new FileInputStream(fileName));
-            World world = (World) is.readObject();
-            is.close();
-            return world;
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+        if (f.exists()){
+            try {
+                ObjectInputStream is = new ObjectInputStream(new FileInputStream(f));
+                World world = (World) is.readObject();
+                return world;
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                System.exit(1);
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.exit(1);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+                System.exit(1);
+            }
         }
 
         return null;
