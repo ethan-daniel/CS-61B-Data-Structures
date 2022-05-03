@@ -73,7 +73,10 @@ public class Game implements Serializable {
     }
 
     public void saveWorld(World world) {
-        File F = new File("worldSave.bin");
+        File F = new File("./worldSave.txt");
+        F.setReadable(true, false);
+        F.setExecutable(true, false);
+        F.setWritable(true, false);
         try {
             ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(F));
             os.writeObject(world);
@@ -84,7 +87,10 @@ public class Game implements Serializable {
         }
     }
     public World loadWorld() {
-        File F = new File("worldSave.bin");
+        File F = new File("./worldSave.txt");
+        F.setReadable(true, false);
+        F.setExecutable(true, false);
+        F.setWritable(true, false);
         if (F.exists()) {
             try {
                 ObjectInputStream is = new ObjectInputStream(new FileInputStream(F));
