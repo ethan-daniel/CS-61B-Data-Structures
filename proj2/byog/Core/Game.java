@@ -16,7 +16,7 @@ public class Game implements Serializable {
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
     //private static String fileName = "./worldSave.bin";
-    private static final File F = new File("worldSave.bin");
+    //public static final File F = new File("worldSave.bin");
 
     /**
      * Method used for playing a fresh game. The game should start from the main menu.
@@ -73,6 +73,7 @@ public class Game implements Serializable {
     }
 
     public void saveWorld(World world) {
+        File F = new File("worldSave.bin");
         try {
             ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(F));
             os.writeObject(world);
@@ -83,6 +84,7 @@ public class Game implements Serializable {
         }
     }
     public World loadWorld() {
+        File F = new File("worldSave.bin");
         if (F.exists()) {
             try {
                 ObjectInputStream is = new ObjectInputStream(new FileInputStream(F));

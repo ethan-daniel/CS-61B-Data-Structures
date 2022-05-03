@@ -46,12 +46,12 @@ public class GameTest {
 //        worldFrame = game.playWithInputString("LDDD:Q");
 
         // PASS
-//        TETile[][] worldFrame = game.playWithInputString("N999SDDD:Q");
-//        worldFrame = game.playWithInputString("L:Q");
-//        worldFrame = game.playWithInputString("L:Q");
-//        worldFrame = game.playWithInputString("LWWWDDD");
+        TETile[][] worldFrame = game.playWithInputString("N999SDDD:Q");
+        worldFrame = game.playWithInputString("L:Q");
+        worldFrame = game.playWithInputString("L:Q");
+        worldFrame = game.playWithInputString("LWWWDDD");
 
-        TETile[][] worldFrame = game.playWithInputString("n3415218040718096461ssdsddaddaa:q");
+//        TETile[][] worldFrame = game.playWithInputString("n3415218040718096461ssdsddaddaa:q");
 
         TERenderer ter = new TERenderer();
         ter.initialize(80, 30);
