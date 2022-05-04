@@ -2,7 +2,7 @@ package byog.Core;
 
 import byog.TileEngine.TERenderer;
 
-public class WorldStateTest {
+public class WorldTest {
     public static void testSpawnPlayer() {
         MapGenerator map = new MapGenerator(80, 30);
         map.generateMap(9223372036854775807L);

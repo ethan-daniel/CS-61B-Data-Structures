@@ -1,6 +1,10 @@
 package byog.Core;
 
+import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
+import edu.princeton.cs.introcs.StdDraw;
+
+import java.awt.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
@@ -13,8 +17,10 @@ import java.io.FileInputStream;
 
 public class Game implements Serializable {
     /* Feel free to change the width and height. */
+    TERenderer ter = new TERenderer();
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
+    private static boolean gameOver;
     //private static String fileName = "./worldSave.bin";
     //public static final File F = new File("worldSave.bin");
 
@@ -22,6 +28,21 @@ public class Game implements Serializable {
      * Method used for playing a fresh game. The game should start from the main menu.
      */
     public void playWithKeyboard() {
+        initGame();
+        drawMenu();
+        String menuOption = singleKeyboardInput();
+
+        if (menuOption.equals("n")) {
+            long seed = getUserSeed();
+            startGame(seed);
+            System.out.println(seed);
+
+        } else if (menuOption.equals("l")) {
+
+        } else if (menuOption.equals("q")) {
+
+        }
+
     }
 
     /**
@@ -110,6 +131,79 @@ public class Game implements Serializable {
         return null;
     }
 
+    public void initGame() {
+        StdDraw.setCanvasSize(WIDTH * 16, HEIGHT * 16);
+        Font font = new Font("Monaco", Font.BOLD, 30);
+        StdDraw.setFont(font);
+        StdDraw.setXscale(0, WIDTH);
+        StdDraw.setYscale(0, HEIGHT);
+        StdDraw.clear(Color.BLACK);
+        StdDraw.enableDoubleBuffering();
+    }
+    public void drawMenu() {
+        StdDraw.clear();
+        StdDraw.clear(Color.BLACK);
 
+        Font font = new Font("Monaco", Font.BOLD, 30);
+        StdDraw.setFont(font);
+        StdDraw.setPenColor(Color.WHITE);
+        StdDraw.text(WIDTH / 2, HEIGHT / 2 + 6, "CS61B: The Game");
+        StdDraw.text(WIDTH / 2, HEIGHT / 3, "New Game (N)");
+        StdDraw.text(WIDTH / 2, (HEIGHT / 3) - 2, "Load Game (L)");
+        StdDraw.text(WIDTH / 2, (HEIGHT / 3) - 4, "Quit (Q)");
+        StdDraw.show();
+    }
+
+    public void drawSeedFrame(String s) {
+        StdDraw.clear();
+        StdDraw.clear(Color.BLACK);
+
+        Font font = new Font("Monaco", Font.BOLD, 30);
+        StdDraw.setFont(font);
+        StdDraw.setPenColor(Color.WHITE);
+        StdDraw.text(WIDTH / 2, HEIGHT / 2 + 6, "Enter a seed (Press S to start): ");
+        StdDraw.text(WIDTH / 2, HEIGHT / 3, s);
+        StdDraw.show();
+    }
+
+    public String singleKeyboardInput() {
+        StringBuilder singleKeyboardInput = new StringBuilder();
+        while (singleKeyboardInput.length() != 1) {
+            if (StdDraw.hasNextKeyTyped()) {
+                singleKeyboardInput.append(StdDraw.nextKeyTyped());
+            }
+        }
+        return singleKeyboardInput.toString().toLowerCase();
+    }
+
+    /** Gets user seed. Stops when user inputs s. */
+    public long getUserSeed() {
+        String seedString = " ";
+        String temp;
+        drawSeedFrame(seedString);
+        while (!seedString.endsWith("S")) {
+            temp = "";
+            if (StdDraw.hasNextKeyTyped()) {
+                temp += StdDraw.nextKeyTyped();
+                seedString += temp.toUpperCase();
+                drawSeedFrame(seedString);
+            }
+        }
+        return Long.parseLong(seedString.substring(1, seedString.length() - 1));
+    }
+
+    public void startGame(long seed) {
+        gameOver = false;
+        World world = new World(seed, WIDTH, HEIGHT);
+        ter.renderFrame(world.getWorld());
+        while (!gameOver) {
+            String input = singleKeyboardInput();
+            world.movePlayer(input);
+            ter.renderFrame(world.getWorld());
+            if (world.isGotDoor()) {
+                gameOver = true;
+            }
+        }
+    }
 
 }

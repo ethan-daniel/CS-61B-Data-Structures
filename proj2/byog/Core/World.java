@@ -14,10 +14,13 @@ public class World implements Serializable {
     private final TETile[][] world;
     private final MapGenerator map;
     private final Player player;
+    private static final TETile DOOR = Tileset.UNLOCKED_DOOR;
+    private static boolean gotDoor;
 
     public class Player implements Serializable {
         private Coordinates position;
 
+        /** Spawns a player and a door. */
         public Player(long seed) {
             ArrayList<Coordinates> allRoomCoordinates = new ArrayList<>();
             for (Room existingRoom : map.getRoomList()) {
@@ -29,17 +32,42 @@ public class World implements Serializable {
             }
 
             Random generator = new Random(seed);
-            int index = generator.nextInt(allRoomCoordinates.size());
-            position = allRoomCoordinates.get(index);
+            int playerIndex = generator.nextInt(allRoomCoordinates.size());
+            position = allRoomCoordinates.get(playerIndex);
             world[position.getX()][position.getY()] = PLAYER;
+
+            int flag = 0;
+            Coordinates doorPosition;
+            while (flag == 0) {
+                int doorIndex = generator.nextInt(allRoomCoordinates.size());
+                if (doorIndex != playerIndex) {
+                    doorIndex = generator.nextInt(allRoomCoordinates.size());
+                    doorPosition = allRoomCoordinates.get(doorIndex);
+                    world[doorPosition.getX()][doorPosition.getY()] = DOOR;
+                    flag = 1;
+                }
+            }
         }
 
         private boolean canUpdatePosition(Coordinates coor) {
             return map.getWorld()[coor.getX()][coor.getY()].equals(FLOOR);
         }
+
+        private boolean nextPositionisDoor(Coordinates coor) {
+            return map.getWorld()[coor.getX()][coor.getY()].equals(DOOR);
+        }
         private void updatePosition(int changeX, int changeY) {
             Coordinates updatedPosition = new Coordinates(position.getX() + changeX,
                     position.getY() + changeY);
+
+            if (nextPositionisDoor(updatedPosition)) {
+                gotDoor = true;
+                world[position.getX()][position.getY()] = FLOOR;
+                position = updatedPosition;
+                world[position.getX()][position.getY()] = PLAYER;
+                return;
+            }
+
             if (!canUpdatePosition(updatedPosition)) {
                 return;
             }
@@ -74,6 +102,10 @@ public class World implements Serializable {
         map.generateMap(seed);
         world = map.getWorld();
         player = new Player(seed);
+    }
+
+    public boolean isGotDoor() {
+        return gotDoor;
     }
 
     public void movePlayer(String input) {
