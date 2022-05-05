@@ -34,13 +34,14 @@ public class Game implements Serializable {
 
         if (menuOption.equals("n")) {
             long seed = getUserSeed();
-            startGame(seed);
+            startNewGame(seed);
             System.out.println(seed);
 
         } else if (menuOption.equals("l")) {
+            startLoadedGame();
 
         } else if (menuOption.equals("q")) {
-
+            drawExitGame();
         }
 
     }
@@ -154,6 +155,17 @@ public class Game implements Serializable {
         StdDraw.show();
     }
 
+    public void drawExitGame() {
+        StdDraw.clear();
+        StdDraw.clear(Color.BLACK);
+
+        Font font = new Font("Monaco", Font.BOLD, 30);
+        StdDraw.setFont(font);
+        StdDraw.setPenColor(Color.WHITE);
+        StdDraw.text(WIDTH / 2, HEIGHT / 2 + 6, "You have exited the game. Thank you for playing!");
+        StdDraw.show();
+    }
+
     public void drawSeedFrame(String s) {
         StdDraw.clear();
         StdDraw.clear(Color.BLACK);
@@ -192,17 +204,36 @@ public class Game implements Serializable {
         return Long.parseLong(seedString.substring(1, seedString.length() - 1));
     }
 
-    public void startGame(long seed) {
-        gameOver = false;
-        World world = new World(seed, WIDTH, HEIGHT);
+    public void gameLoop(World world) {
+        ter.initialize(WIDTH, HEIGHT);
         ter.renderFrame(world.getWorld());
         while (!gameOver) {
             String input = singleKeyboardInput();
+            if (input.toLowerCase().equals("q")) {
+                saveWorld(world);
+                gameOver = true;
+                drawExitGame();
+                break;
+            }
             world.movePlayer(input);
             ter.renderFrame(world.getWorld());
             if (world.isGotDoor()) {
                 gameOver = true;
             }
+        }
+    }
+
+    public void startNewGame(long seed) {
+        gameOver = false;
+        World world = new World(seed, WIDTH, HEIGHT);
+        gameLoop(world);
+    }
+
+    public void startLoadedGame() {
+        World world = loadWorld();
+        gameOver = false;
+        if (world != null) {
+            gameLoop(world);
         }
     }
 
