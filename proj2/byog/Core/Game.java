@@ -2,7 +2,6 @@ package byog.Core;
 
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
-import byog.TileEngine.Tileset;
 import edu.princeton.cs.introcs.StdDraw;
 
 import java.awt.*;
@@ -19,8 +18,8 @@ import java.io.FileInputStream;
 public class Game implements Serializable {
     /* Feel free to change the width and height. */
     TERenderer ter = new TERenderer();
-    public static final int WIDTH = 120;
-    public static final int HEIGHT = 100;
+    public static final int WIDTH = 100;
+    public static final int HEIGHT = 50;
     private static boolean gameOver;
     private TETile HUDTile;
 

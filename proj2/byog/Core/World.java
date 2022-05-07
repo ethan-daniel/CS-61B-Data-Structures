@@ -149,15 +149,13 @@ public class World implements Serializable {
 
     private TETile randomEnvironment(long seed) {
         Random generator = new Random(seed);
-        int num = generator.nextInt(4);
+        int num = generator.nextInt(3);
 
         if (num == 0) {
             return Tileset.SAND;
         } else if (num == 1) {
             return Tileset.MOUNTAIN;
         } else if (num == 2) {
-            return Tileset.TREE;
-        } else if (num == 3) {
             return Tileset.WATER;
         }
 
