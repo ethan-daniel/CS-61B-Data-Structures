@@ -2,6 +2,7 @@ package byog.Core;
 
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
+import byog.TileEngine.Tileset;
 import edu.princeton.cs.introcs.StdDraw;
 
 import java.awt.*;
@@ -18,11 +19,10 @@ import java.io.FileInputStream;
 public class Game implements Serializable {
     /* Feel free to change the width and height. */
     TERenderer ter = new TERenderer();
-    public static final int WIDTH = 80;
-    public static final int HEIGHT = 30;
+    public static final int WIDTH = 120;
+    public static final int HEIGHT = 100;
     private static boolean gameOver;
-    //private static String fileName = "./worldSave.bin";
-    //public static final File F = new File("worldSave.bin");
+    private TETile HUDTile;
 
     /**
      * Method used for playing a fresh game. The game should start from the main menu.
@@ -35,13 +35,12 @@ public class Game implements Serializable {
         if (menuOption.equals("n")) {
             long seed = getUserSeed();
             startNewGame(seed);
-            System.out.println(seed);
 
         } else if (menuOption.equals("l")) {
             startLoadedGame();
 
         } else if (menuOption.equals("q")) {
-            drawExitGame();
+            drawExitGame("You have exited the game. Thank you for playing! (Program will automatically close)");
         }
 
     }
@@ -73,7 +72,8 @@ public class Game implements Serializable {
             String seedString = "" + seed;
             String keyboardInput = input.substring(menuOption.length() + seedString.length());
             World world = new World(seed, WIDTH, HEIGHT);
-            world.movePlayer(keyboardInput);
+            world.movePlayer1(keyboardInput);
+            world.movePlayer2(keyboardInput);
             finalWorldFrame = world.getWorld();
             if (existsQ) {
                 saveWorld(world);
@@ -83,7 +83,8 @@ public class Game implements Serializable {
             String keyboardInput = input.substring(menuOption.length());
             World world = loadWorld();
             if (world != null) {
-                world.movePlayer(keyboardInput);
+                world.movePlayer1(keyboardInput);
+                world.movePlayer2(keyboardInput);
                 finalWorldFrame = world.getWorld();
             }
             if (existsQ) {
@@ -132,6 +133,10 @@ public class Game implements Serializable {
         return null;
     }
 
+    public void drawGetPlayerName() {
+
+    }
+
     public void initGame() {
         StdDraw.setCanvasSize(WIDTH * 16, HEIGHT * 16);
         Font font = new Font("Monaco", Font.BOLD, 30);
@@ -141,12 +146,16 @@ public class Game implements Serializable {
         StdDraw.clear(Color.BLACK);
         StdDraw.enableDoubleBuffering();
     }
-    public void drawMenu() {
+
+    public void initDrawFrame() {
         StdDraw.clear();
         StdDraw.clear(Color.BLACK);
 
         Font font = new Font("Monaco", Font.BOLD, 30);
         StdDraw.setFont(font);
+    }
+    public void drawMenu() {
+        initDrawFrame();
         StdDraw.setPenColor(Color.WHITE);
         StdDraw.text(WIDTH / 2, HEIGHT / 2 + 6, "CS61B: The Game");
         StdDraw.text(WIDTH / 2, HEIGHT / 3, "New Game (N)");
@@ -155,35 +164,57 @@ public class Game implements Serializable {
         StdDraw.show();
     }
 
-    public void drawExitGame() {
-        StdDraw.clear();
-        StdDraw.clear(Color.BLACK);
-
-        Font font = new Font("Monaco", Font.BOLD, 30);
-        StdDraw.setFont(font);
+    public void drawExitGame(String s) {
+        initDrawFrame();
         StdDraw.setPenColor(Color.WHITE);
-        StdDraw.text(WIDTH / 2, HEIGHT / 2 + 6, "You have exited the game. Thank you for playing!");
+        StdDraw.text(WIDTH / 2, HEIGHT / 2 + 6, s);
         StdDraw.show();
+        StdDraw.pause(5000);
+        System.exit(1);
     }
 
     public void drawSeedFrame(String s) {
-        StdDraw.clear();
-        StdDraw.clear(Color.BLACK);
-
-        Font font = new Font("Monaco", Font.BOLD, 30);
-        StdDraw.setFont(font);
+        initDrawFrame();
         StdDraw.setPenColor(Color.WHITE);
         StdDraw.text(WIDTH / 2, HEIGHT / 2 + 6, "Enter a seed (Press S to start): ");
         StdDraw.text(WIDTH / 2, HEIGHT / 3, s);
         StdDraw.show();
     }
 
+    /** Writes the name of the tile the mouse is hovering over to the top right of the window. */
+    public void drawMouseTile(World world) {
+        int x = (int) StdDraw.mouseX();
+        int y = (int) StdDraw.mouseY();
+        TETile tile = world.getWorld()[x][y];
+
+        if (!tile.equals(HUDTile)) {
+            StdDraw.setPenColor(Color.BLACK);
+            StdDraw.filledRectangle(1,HEIGHT - 1,8, 1);
+            StdDraw.setPenColor(Color.WHITE);
+            StdDraw.textLeft(1, HEIGHT - 1, tile.description());
+        }
+        StdDraw.show();
+    }
+
+    /** Waits for a user to click a key, and returns it. */
     public String singleKeyboardInput() {
         StringBuilder singleKeyboardInput = new StringBuilder();
         while (singleKeyboardInput.length() != 1) {
             if (StdDraw.hasNextKeyTyped()) {
                 singleKeyboardInput.append(StdDraw.nextKeyTyped());
             }
+        }
+        return singleKeyboardInput.toString().toLowerCase();
+    }
+
+    /** Similar function to singleKeyboardInput, but also draws tiles that are moused over. */
+    public String singleKeyboardInputInGame(World world) {
+        StringBuilder singleKeyboardInput = new StringBuilder();
+        while (singleKeyboardInput.length() != 1) {
+            if (StdDraw.hasNextKeyTyped()) {
+                singleKeyboardInput.append(StdDraw.nextKeyTyped());
+            }
+            drawMouseTile(world);
         }
         return singleKeyboardInput.toString().toLowerCase();
     }
@@ -208,17 +239,21 @@ public class Game implements Serializable {
         ter.initialize(WIDTH, HEIGHT);
         ter.renderFrame(world.getWorld());
         while (!gameOver) {
-            String input = singleKeyboardInput();
+            String input = singleKeyboardInputInGame(world);
             if (input.toLowerCase().equals("q")) {
                 saveWorld(world);
                 gameOver = true;
-                drawExitGame();
+                drawExitGame("You have exited the game. Thank you for playing! (Program will automatically close)");
                 break;
             }
-            world.movePlayer(input);
+
+            world.movePlayer1(input);
+            world.movePlayer2(input);
+            StdDraw.show();
             ter.renderFrame(world.getWorld());
             if (world.isGotDoor()) {
                 gameOver = true;
+                drawExitGame("You both escaped! Thank you for playing! (Program will automatically close)");
             }
         }
     }

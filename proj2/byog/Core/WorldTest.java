@@ -1,10 +1,11 @@
 package byog.Core;
 
 import byog.TileEngine.TERenderer;
+import byog.TileEngine.Tileset;
 
 public class WorldTest {
     public static void testSpawnPlayer() {
-        MapGenerator map = new MapGenerator(80, 30);
+        MapGenerator map = new MapGenerator(80, 30, Tileset.NOTHING);
         map.generateMap(9223372036854775807L);
 
 
@@ -17,7 +18,7 @@ public class WorldTest {
 
     public static void testInputStringPlayer() {
         World world = new World(9223372036854775807L, 80, 30);
-        world.movePlayer("wdddddddds");
+        world.movePlayer1("wdddddddds");
 
         TERenderer ter = new TERenderer();
         ter.initialize(80, 30);

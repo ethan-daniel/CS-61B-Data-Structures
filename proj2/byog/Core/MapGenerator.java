@@ -26,13 +26,13 @@ public class MapGenerator implements Serializable {
     private final ArrayList<Room> verticalHallwayList = new ArrayList<>();
 
     /** Initializes world with given width and height. */
-    MapGenerator(int width, int height) {
+    MapGenerator(int width, int height, TETile tile) {
         WORLD_WIDTH = width;
         WORLD_HEIGHT = height;
         world = new TETile[WORLD_WIDTH][WORLD_HEIGHT];
         for (int x = 0; x != WORLD_WIDTH; ++x) {
             for (int y = 0; y != WORLD_HEIGHT; ++y) {
-                world[x][y] = Tileset.NOTHING;
+                world[x][y] = tile;
             }
         }
     }
