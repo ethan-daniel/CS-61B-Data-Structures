@@ -144,7 +144,7 @@ public class World implements Serializable {
         map.generateMap(seed);
         world = map.getWorld();
         player1 = new Player(seed, "a", "d", "w", "s");
-        player2 = new Player(seed + 1, "j", "l", "i", "k");
+        player2 = new Player(seed - 1, "j", "l", "i", "k");
     }
 
     private TETile randomEnvironment(long seed) {
