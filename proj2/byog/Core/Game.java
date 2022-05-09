@@ -18,7 +18,7 @@ import java.io.FileInputStream;
 public class Game implements Serializable {
     /* Feel free to change the width and height. */
     TERenderer ter = new TERenderer();
-    public static final int WIDTH = 100;
+    public static final int WIDTH = 95;
     public static final int HEIGHT = 50;
     private static boolean gameOver;
     private TETile HUDTile;
