@@ -2,12 +2,12 @@ package hw2;
 
 import edu.princeton.cs.introcs.StdRandom;
 import edu.princeton.cs.introcs.StdStats;
-import java.lang.Math;
+//import java.lang.Math;
 
 public class PercolationStats {
 
-    private static double arrStats[];
-    private static int TExperiments;
+    private static double[] arrStats;
+    private static int tExperiments;
 
     // perform T independent experiments on an N-by-N grid
     public PercolationStats(int N, int T, PercolationFactory pf) {
@@ -15,8 +15,8 @@ public class PercolationStats {
             throw new java.lang.IllegalArgumentException();
         }
 
-        TExperiments = T;
-        arrStats = new double[TExperiments];
+        tExperiments = T;
+        arrStats = new double[tExperiments];
 
         for (int i = 0; i != T; ++i) {
             Percolation perc = pf.make(N);
@@ -25,7 +25,7 @@ public class PercolationStats {
     }
 
     private double computeStat(int N, Percolation perc) {
-        while(!perc.percolates()) {
+        while (!perc.percolates()) {
             int row = StdRandom.uniform(N);
             int col = StdRandom.uniform(N);
             perc.open(row, col);
@@ -46,11 +46,11 @@ public class PercolationStats {
 
     // low endpoint of 95% confidence interval
     public double confidenceLow() {
-        return mean() - (1.96 * stddev() / Math.sqrt(TExperiments));
+        return mean() - (1.96 * stddev() / Math.sqrt(tExperiments));
     }
 
     // high endpoint of 95% confidence interval
     public double confidenceHigh() {
-        return mean() + (1.96 * stddev() / Math.sqrt(TExperiments));
+        return mean() + (1.96 * stddev() / Math.sqrt(tExperiments));
     }
 }

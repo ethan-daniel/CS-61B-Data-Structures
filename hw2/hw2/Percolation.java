@@ -38,8 +38,8 @@ public class Percolation {
     // helper method to check that row and column indices are between 0
     // and N - 1.
     private boolean outOfBounds(int x, int y) {
-        return x < 0 || x > gridLength - 1 ||
-                y < 0 || y > gridLength - 1;
+        return x < 0 || x > gridLength - 1
+                || y < 0 || y > gridLength - 1;
     }
 
     // helper method that generates a unique number to a position
