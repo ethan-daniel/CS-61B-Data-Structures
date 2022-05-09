@@ -6,8 +6,8 @@ import edu.princeton.cs.introcs.StdStats;
 
 public class PercolationStats {
 
-    private static double[] arrStats;
-    private static int tExperiments;
+    private double[] arrStats;
+    private int tExperiments;
 
     // perform T independent experiments on an N-by-N grid
     public PercolationStats(int N, int T, PercolationFactory pf) {
@@ -26,12 +26,12 @@ public class PercolationStats {
 
     private double computeStat(int N, Percolation perc) {
         while (!perc.percolates()) {
-            int row = StdRandom.uniform(N);
-            int col = StdRandom.uniform(N);
+            int row = StdRandom.uniform(0, N);
+            int col = StdRandom.uniform(0, N);
             perc.open(row, col);
         }
 
-        return perc.numberOfOpenSites() / (N * N);
+        return (double) perc.numberOfOpenSites() / (N * N);
     }
 
     // sample mean of percolation threshold

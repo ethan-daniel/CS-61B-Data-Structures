@@ -3,10 +3,10 @@ package hw2;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
-    private static int gridLength;
-    private static int numOpenSites;
-    private static WeightedQuickUnionUF gridOfSites;
-    private static boolean[] arrOfSitesOpenness;
+    private int gridLength;
+    private int numOpenSites;
+    private WeightedQuickUnionUF gridOfSites;
+    private boolean[] arrOfSitesOpenness;
 
     // create N-by-N grid, with all sites initially blocked
     // (For example: 20x20 grid has the max site (19,19) )
