@@ -6,6 +6,7 @@ public class Percolation {
     private int gridLength;
     private int numOpenSites;
     private WeightedQuickUnionUF gridOfSites;
+    private WeightedQuickUnionUF topGridOfSites;
     private boolean[] arrOfSitesOpenness;
 
     // create N-by-N grid, with all sites initially blocked
@@ -20,6 +21,7 @@ public class Percolation {
         gridLength = N;
         numOpenSites = 0;
         gridOfSites = new WeightedQuickUnionUF(gridLength * gridLength + 2);
+        topGridOfSites = new WeightedQuickUnionUF(gridLength * gridLength + 2);
         arrOfSitesOpenness = new boolean[N * N + 2];
 
         // Init. the virtual top and bottom sites.
@@ -52,8 +54,19 @@ public class Percolation {
         if (!outOfBounds(r, c)) {
             if (isOpen(r, c)) {
                 gridOfSites.union(xyTo1D(r, c), q);
+                topGridOfSites.union(xyTo1D(r, c), q);
             }
         }
+
+        if (r == -1) {
+            gridOfSites.union(gridLength * gridLength, q);
+            topGridOfSites.union(gridLength * gridLength, q);
+        }
+
+        if (r == gridLength) {
+            gridOfSites.union(gridLength * gridLength - 1, q);
+        }
+
     }
 
     // open the site (row, col) if it is not open already
@@ -89,7 +102,7 @@ public class Percolation {
             throw new java.lang.IndexOutOfBoundsException();
         }
 
-        return gridOfSites.connected(xyTo1D(row, col), gridLength * gridLength) && isOpen(row, col);
+        return topGridOfSites.connected(xyTo1D(row, col), gridLength * gridLength) && isOpen(row, col);
     }
 
     // number of open sites
@@ -104,7 +117,17 @@ public class Percolation {
 
     // use for unit testing
     public static void main(String[] args) {
-
+        Percolation perc = new Percolation(10);
+        perc.open(0,0);
+        perc.open(1, 0);
+        perc.open(2, 0);
+        perc.open(3, 0);
+        perc.open(4, 0);
+        perc.open(5, 0);
+        perc.open(6, 0);
+        perc.open(7, 0);
+        perc.open(8, 0);
+        perc.open(9, 0);
     }
 
 }
