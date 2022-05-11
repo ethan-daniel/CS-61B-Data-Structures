@@ -102,7 +102,8 @@ public class Percolation {
             throw new java.lang.IndexOutOfBoundsException();
         }
 
-        return topGridOfSites.connected(xyTo1D(row, col), gridLength * gridLength) && isOpen(row, col);
+        return topGridOfSites.connected(xyTo1D(row, col), gridLength * gridLength)
+                && isOpen(row, col);
     }
 
     // number of open sites
@@ -118,7 +119,7 @@ public class Percolation {
     // use for unit testing
     public static void main(String[] args) {
         Percolation perc = new Percolation(10);
-        perc.open(0,0);
+        perc.open(0, 0);
         perc.open(1, 0);
         perc.open(2, 0);
         perc.open(3, 0);
