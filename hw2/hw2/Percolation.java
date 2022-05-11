@@ -113,15 +113,18 @@ public class Percolation {
 
     // does the system percolate?
     public boolean percolates() {
-        return gridOfSites.connected(gridLength * gridLength, gridLength * gridLength - 1);
+        if (!(gridLength == 1 && numOpenSites == 0)) {
+            return gridOfSites.connected(gridLength * gridLength, gridLength * gridLength - 1);
+        }
+        return false;
     }
 
     // use for unit testing
     public static void main(String[] args) {
-        Percolation perc = new Percolation(10);
+        Percolation perc = new Percolation(2);
         perc.open(0, 0);
         perc.open(1, 0);
-        perc.open(2, 0);
+        perc.open(1, 1);
         perc.open(3, 0);
         perc.open(4, 0);
         perc.open(5, 0);
