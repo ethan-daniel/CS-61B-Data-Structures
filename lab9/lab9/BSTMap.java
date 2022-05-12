@@ -52,7 +52,7 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V> {
         } else if (key.compareTo(root.key) < 0) {
             return getHelper(key, p.left);
         } else {
-          return getHelper(key, p.right);
+            return getHelper(key, p.right);
         }
     }
 

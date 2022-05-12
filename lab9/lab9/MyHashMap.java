@@ -26,6 +26,11 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         this.clear();
     }
 
+    public MyHashMap(int initialSize) {
+        buckets = new ArrayMap[initialSize];
+        this.clear();
+    }
+
     /* Removes all of the mappings from this map. */
     @Override
     public void clear() {
@@ -48,24 +53,52 @@ public class MyHashMap<K, V> implements Map61B<K, V> {
         return Math.floorMod(key.hashCode(), numBuckets);
     }
 
+    /** Resizes the hash table */
+    private void resize(int n) {
+        MyHashMap<K, V> temp = new MyHashMap<>(n);
+        for (int i = 0; i != size; ++i) {
+            for (K key : buckets[i].keySet()) {
+                temp.put(key, buckets[i].get(key));
+            }
+        }
+        this.size = temp.size;
+        this.buckets = temp.buckets;
+    }
+
     /* Returns the value to which the specified key is mapped, or null if this
      * map contains no mapping for the key.
      */
     @Override
     public V get(K key) {
-        throw new UnsupportedOperationException();
+        if (key == null) {
+            return null;
+        }
+        int i = hash(key);
+        return buckets[i].get(key);
     }
 
     /* Associates the specified value with the specified key in this map. */
     @Override
     public void put(K key, V value) {
-        throw new UnsupportedOperationException();
+        if (value == null || key == null) {
+            return;
+        }
+
+        if (loadFactor() > MAX_LF) {
+            resize(2 * size);
+        }
+
+        int i = hash(key);
+        if (!buckets[i].containsKey(key)) {
+            ++size;
+        }
+        buckets[i].put(key, value);
     }
 
     /* Returns the number of key-value mappings in this map. */
     @Override
     public int size() {
-        throw new UnsupportedOperationException();
+        return size;
     }
 
     //////////////// EVERYTHING BELOW THIS LINE IS OPTIONAL ////////////////
