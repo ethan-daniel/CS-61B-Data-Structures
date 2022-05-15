@@ -43,7 +43,7 @@ public class TestComplexOomage {
         List<Oomage> deadlyList = new ArrayList<>();
         List<Integer> badParams = new ArrayList<>();
 
-        int num = 256;
+        int num = 255;
 
         // Your code here.
         for (int i = 0; i != 5; ++i) {
