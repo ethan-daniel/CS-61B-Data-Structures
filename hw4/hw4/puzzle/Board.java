@@ -1,17 +1,15 @@
 package hw4.puzzle;
 
 import edu.princeton.cs.algs4.Queue;
-
+import java.util.Objects;
 public class Board implements WorldState {
-    private final static int BLANK = 0;
+    private final int BLANK = 0;
     private int[][] board;
-    public int[][] goalBoard;
 
     /** Constructs a board from an N-by-N array of tiles where
      tiles[i][j] = tile at row i, column j */
     public Board(int[][] tiles) {
         board = new int[tiles.length][tiles[0].length];
-        goalBoard = new int[tiles.length][tiles[0].length];
 
         for (int i = 0; i != tiles.length; ++i) {
             for (int j = 0; j != tiles.length; ++j) {
@@ -19,16 +17,6 @@ public class Board implements WorldState {
             }
         }
 
-        int num = 1;
-
-        for (int i = tiles.length - 1; i != 0; --i) {
-            for (int j = 0; j != tiles.length; ++j) {
-                goalBoard[i][j] = num;
-                ++num;
-            }
-        }
-
-        goalBoard[0][tiles.length - 1] = 0;
     }
 
     /** Returns value of tile at row i, column j (or 0 if blank) */
@@ -87,7 +75,7 @@ public class Board implements WorldState {
 
         for (int i = 0; i != this.size(); ++i) {
             for (int j = 0; j != this.size(); ++j) {
-                if (tileAt(i, j) != goalBoard[i][j]) {
+                if (tileAt(i, j) != i * size() + j + 1 && tileAt(i, j) != BLANK) {
                     ++count;
                 }
             }
@@ -146,6 +134,11 @@ public class Board implements WorldState {
         return true;
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(board);
+    }
+
     /** Returns the string representation of the board. 
       * Uncomment this method. */
     public String toString() {
@@ -154,12 +147,11 @@ public class Board implements WorldState {
         s.append(N + "\n");
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
-                s.append(String.format("%2d ", tileAt(i,j)));
+                s.append(String.format("%2d ", tileAt(i, j)));
             }
             s.append("\n");
         }
         s.append("\n");
         return s.toString();
     }
-
 }

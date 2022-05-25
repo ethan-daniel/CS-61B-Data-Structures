@@ -20,7 +20,7 @@ public class Solver {
         numMoves = 0;
         SearchNode finish = null;
 
-        while(!searchNodes.isEmpty()) {
+        while (!searchNodes.isEmpty()) {
             SearchNode currentNode =  searchNodes.delMin();
             numMoves = currentNode.numMoves;
             if (currentNode.world.isGoal()) {
@@ -29,7 +29,7 @@ public class Solver {
             } else {
                 for (WorldState neighbor : currentNode.world.neighbors()) {
                     if (currentNode.prevNode == null
-                    || !neighbor.equals(currentNode.prevNode.world)) {
+                        || !neighbor.equals(currentNode.prevNode.world)) {
                         SearchNode node = new SearchNode(neighbor,
                                 currentNode.numMoves + 1, currentNode);
                         searchNodes.insert(node);
@@ -45,7 +45,7 @@ public class Solver {
         Collections.reverse(sequenceNodes);
     }
 
-    private class SearchNode implements Comparable<SearchNode>{
+    private class SearchNode implements Comparable<SearchNode> {
         private WorldState world;
         private int numMoves;
         private SearchNode prevNode;
