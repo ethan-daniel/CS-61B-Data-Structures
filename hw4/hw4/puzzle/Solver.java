@@ -2,10 +2,10 @@ package hw4.puzzle;
 import edu.princeton.cs.algs4.MinPQ;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-
 public class Solver {
-    private List<WorldState> prevNodes;
+    private List<WorldState> sequenceNodes;
     private int numMoves;
 
     /** Constructor which solves the puzzle, computing
@@ -15,16 +15,16 @@ public class Solver {
     public Solver(WorldState inital) {
         MinPQ<SearchNode> searchNodes = new MinPQ<>();
         SearchNode initNode = new SearchNode(inital, 0, null);
-        prevNodes = new ArrayList<WorldState>();
-        prevNodes.add(inital);
+        sequenceNodes = new ArrayList<>();
         searchNodes.insert(initNode);
         numMoves = 0;
+        SearchNode finish = null;
 
         while(!searchNodes.isEmpty()) {
             SearchNode currentNode =  searchNodes.delMin();
-            //prevNodes.add(currentNode.world);
             numMoves = currentNode.numMoves;
             if (currentNode.world.isGoal()) {
+                finish = currentNode;
                 break;
             } else {
                 for (WorldState neighbor : currentNode.world.neighbors()) {
@@ -36,6 +36,12 @@ public class Solver {
                 }
             }
         }
+
+        while (finish != null) {
+            sequenceNodes.add(finish.world);
+            finish = finish.prevNode;
+        }
+        Collections.reverse(sequenceNodes);
     }
 
     private class SearchNode implements Comparable<SearchNode>{
@@ -68,6 +74,6 @@ public class Solver {
     /** Returns a sequence of WorldStates from the initial WorldState
      to the solution. */
     Iterable<WorldState> solution() {
-        return prevNodes;
+        return sequenceNodes;
     }
 }
