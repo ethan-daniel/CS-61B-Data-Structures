@@ -28,7 +28,8 @@ public class Solver {
                 break;
             } else {
                 for (WorldState neighbor : currentNode.world.neighbors()) {
-                    if (!neighbor.equals(currentNode.world)) {
+                    if (currentNode.prevNode == null
+                    || !neighbor.equals(currentNode.prevNode.world)) {
                         SearchNode node = new SearchNode(neighbor,
                                 currentNode.numMoves + 1, currentNode);
                         searchNodes.insert(node);
