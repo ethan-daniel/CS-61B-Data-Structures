@@ -74,7 +74,7 @@ public class Solver {
 
     /** Returns a sequence of WorldStates from the initial WorldState
      to the solution. */
-    Iterable<WorldState> solution() {
+    public Iterable<WorldState> solution() {
         return sequenceNodes;
     }
 }
