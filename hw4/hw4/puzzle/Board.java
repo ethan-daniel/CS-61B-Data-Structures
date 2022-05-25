@@ -4,21 +4,45 @@ import edu.princeton.cs.algs4.Queue;
 
 public class Board implements WorldState {
     private final static int BLANK = 0;
+    private int[][] board;
+    public int[][] goalBoard;
 
     /** Constructs a board from an N-by-N array of tiles where
      tiles[i][j] = tile at row i, column j */
     public Board(int[][] tiles) {
+        board = new int[tiles.length][tiles[0].length];
+        goalBoard = new int[tiles.length][tiles[0].length];
 
+        for (int i = 0; i != tiles.length; ++i) {
+            for (int j = 0; j != tiles.length; ++j) {
+                board[i][j] = tiles[i][j];
+            }
+        }
+
+        int num = 1;
+
+        for (int i = tiles.length - 1; i != 0; --i) {
+            for (int j = 0; j != tiles.length; ++j) {
+                goalBoard[i][j] = num;
+                ++num;
+            }
+        }
+
+        goalBoard[0][tiles.length - 1] = 0;
     }
 
     /** Returns value of tile at row i, column j (or 0 if blank) */
     public int tileAt(int i, int j) {
-        return 0;
+        if (i < 0 || i >= size() || j < 0 || j >= size()) {
+            throw new java.lang.IndexOutOfBoundsException();
+        }
+
+        return board[i][j];
     }
 
     /** Returns the board size N */
     public int size() {
-        return 0;
+        return board.length;
     }
 
     /** Returns the neighbors of the current board
@@ -59,25 +83,67 @@ public class Board implements WorldState {
 
     /** The number of tiles in the wrong position. */
     public int hamming() {
-        return 0;
+        int count = 0;
+
+        for (int i = 0; i != this.size(); ++i) {
+            for (int j = 0; j != this.size(); ++j) {
+                if (tileAt(i, j) != goalBoard[i][j]) {
+                    ++count;
+                }
+            }
+        }
+
+        return count;
     }
 
     /** The sum of the Manhattan distances
      * (sum of the vertical and horizontal distance)
-     * from the tiles to their goal positions.*/
+     * from the tiles to their goal positions.
+     * Source of Idea: MT2 Review Document. */
     public int manhattan() {
-        return 0;
+        int count = 0;
+        for (int i = 0; i != size(); ++i) {
+            for (int j = 0; j != size(); ++j) {
+                if (tileAt(i, j) != BLANK) {
+                    int row = (tileAt(i, j) - 1) / size();
+                    int col = (tileAt(i, j) - 1) % size();
+                    count += (Math.abs(i - row) + Math.abs(j - col));
+                }
+            }
+        }
+        return count;
     }
 
     /** Estimated distance to goal. */
     public int estimatedDistanceToGoal() {
-        return 0;
+        return manhattan();
     }
 
     /** Returns true if this board's tile values are the same
      position as y's */
     public boolean equals(Object y) {
-        return false;
+        if (this == y) {
+            return true;
+        }
+        if (y == null || getClass() != y.getClass()) {
+            return false;
+        }
+
+        Board boardY = (Board) y;
+
+        if (boardY.size() != this.size()) {
+            return false;
+        }
+
+        for (int i = 0; i != this.size(); ++i) {
+            for (int j = 0; j != this.size(); ++j) {
+                if (this.tileAt(i, j) != boardY.tileAt(i, j)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     /** Returns the string representation of the board. 
