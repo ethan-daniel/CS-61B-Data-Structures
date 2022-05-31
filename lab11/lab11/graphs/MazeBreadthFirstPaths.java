@@ -1,9 +1,6 @@
 package lab11.graphs;
 
-import edu.princeton.cs.algs4.In;
-
 import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.Queue;
 
 /**
@@ -37,7 +34,7 @@ public class MazeBreadthFirstPaths extends MazeExplorer {
         announce();
         fringe.add(s);
 
-        while(!fringe.isEmpty()) {
+        while (!fringe.isEmpty()) {
             int v = fringe.remove();
             if (v == t) {
                 targetFound = true;
