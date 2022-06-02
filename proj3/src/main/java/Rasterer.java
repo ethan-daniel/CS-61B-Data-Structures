@@ -68,8 +68,7 @@ public class Rasterer {
         Map<String, Object> results = new HashMap<>();
 //        System.out.println("Since you haven't implemented getMapRaster, nothing is displayed in "
 //                           + "your browser.");
-        this.params = params;
-        depth = calculateDepth();
+        results = getMapRasterHelper(params);
 
         return results;
     }
@@ -77,8 +76,23 @@ public class Rasterer {
     private Map<String, Object> getMapRasterHelper(Map<String, Double> params) {
         Map<String, Object> results = new HashMap<>();
 
+        this.params = params;
+        depth = calculateDepth();
+
         query_success = checkQuery();
-        System.out.println(query_success);
+        results.put("query_success", query_success);
+        if (query_success == false) {
+            return results;
+        }
+        generateLonDPPValues();
+        calculateRenderGrid();
+
+        results.put("render_grid", render_grid);
+        results.put("raster_ul_lon", raster_ul_lon);
+        results.put("raster_ul_lat", raster_ul_lat);
+        results.put("raster_lr_lon", raster_lr_lon);
+        results.put("raster_lr_lat", raster_lr_lat);
+        results.put("depth", depth);
 
         return results;
     }
@@ -245,26 +259,16 @@ public class Rasterer {
 
     /** For testing ONLY*/
     public void tempSolve() {
-//        calculateULTile();
-//        calculateLRTile();
 //        testCalculateCornerTile();
 //        calculateRenderGrid();
-        System.out.println(checkQuery());
+//        System.out.println(checkQuery());
     }
 
 
     public static void main(String[] args) {
         Rasterer rast = new Rasterer();
-        rast.generateLonDPPValues();
 
         Map<String, Double> query = new HashMap<>();
-//        query.put("lrlon", -122.24053369025242);
-//        query.put("ullon", -122.24163047377972);
-//        query.put("w",892.0);
-//        query.put("h", 875.0);
-//        query.put("ullat", 37.87655856892288);
-//        query.put("lrlat", 37.87548268822065);
-
         query.put("lrlon", -122.24053369025242);
         query.put("ullon", -122.24163047377972);
         query.put("w",892.0);
@@ -272,9 +276,16 @@ public class Rasterer {
         query.put("ullat", 37.87655856892288);
         query.put("lrlat", 37.87548268822065);
 
+//        query.put("lrlon", -122.24053369025242);
+//        query.put("ullon", -122.24163047377972);
+//        query.put("w",892.0);
+//        query.put("h", 875.0);
+//        query.put("ullat", 37.87655856892288);
+//        query.put("lrlat", 37.87548268822065);
+
         rast.getMapRaster(query);
 
-        rast.tempSolve();
+//        rast.tempSolve();
 
     }
 
