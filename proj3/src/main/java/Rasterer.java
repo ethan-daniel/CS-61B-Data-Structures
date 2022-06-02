@@ -8,6 +8,19 @@ import java.util.Map;
  * not draw the output correctly.
  */
 public class Rasterer {
+    public static final double ROOT_ULLAT = 37.892195547244356, ROOT_ULLON = -122.2998046875,
+            ROOT_LRLAT = 37.82280243352756, ROOT_LRLON = -122.2119140625;
+    private static final int MAX_DEPTH = 7;
+
+    private String[][] render_grid;
+    private double raster_ul_lon;
+    private double raster_ul_lat;
+    private double raster_lr_lon;
+    private double raster_lr_lat;
+    private int depth;
+    private boolean query_success;
+    private double[] lonDPP_depth;
+    //private double width;
 
     public Rasterer() {
         // YOUR CODE HERE
@@ -42,11 +55,52 @@ public class Rasterer {
      *                    forget to set this to true on success! <br>
      */
     public Map<String, Object> getMapRaster(Map<String, Double> params) {
-        // System.out.println(params);
+        System.out.println(params);
         Map<String, Object> results = new HashMap<>();
         System.out.println("Since you haven't implemented getMapRaster, nothing is displayed in "
                            + "your browser.");
         return results;
+    }
+
+    private Map<String, Object> getMapRasterHelper(Map<String, Double> params) {
+        Map<String, Object> results = new HashMap<>();
+
+
+        return results;
+    }
+
+    /** Longitudinal distance per pixel calculation. */
+    private double calculateLonDPP(double lrlon, double ullon, double width) {
+        return (lrlon - ullon) / width;
+    }
+
+    /** Calculates the LonDPP values at each depth.  */
+    private void generateLonDPPValues() {
+        lonDPP_depth = new double[MAX_DEPTH + 1];
+        for (int i = 0; i != MAX_DEPTH; ++i) {
+            lonDPP_depth[i] = calculateLonDPP(ROOT_LRLON, ROOT_ULLON, 256) /
+                    Math.pow(2, i);
+        }
+    }
+
+
+    /** Returns the upper-left corner tile for the query box. */
+    private String calculateULTile() {
+        String tile = "";
+
+        // Get depth
+
+        // Get x
+
+
+        // Get y
+
+        return tile;
+    }
+
+    public static void main(String[] args) {
+        Rasterer rast = new Rasterer();
+        rast.generateLonDPPValues();
     }
 
 }
