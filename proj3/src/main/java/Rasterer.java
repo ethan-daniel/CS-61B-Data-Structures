@@ -31,6 +31,7 @@ public class Rasterer {
         params = new HashMap<>();
         lonDPP_depth = new double[MAX_DEPTH + 1];
         generateLonDPPValues();
+        query_success = false;
 
     }
 
@@ -76,8 +77,29 @@ public class Rasterer {
     private Map<String, Object> getMapRasterHelper(Map<String, Double> params) {
         Map<String, Object> results = new HashMap<>();
 
+        query_success = checkQuery();
+        System.out.println(query_success);
 
         return results;
+    }
+
+    /** Checks that the query box is located completely inside
+     * the root longitude/ latitudes. */
+    private boolean checkQuery() {
+        if (params.get("ullon") > params.get("lrlon") ||
+        params.get("ullat") < params.get("lrlat")) {
+            return false;
+        }
+
+        if (!((params.get("lrlon") < ROOT_LRLON) &&
+                (params.get("ullon") > ROOT_ULLON) &&
+                (params.get("lrlat") > ROOT_LRLAT) &&
+                (params.get("ullat") < ROOT_ULLAT))) {
+            return false;
+        }
+
+        return true;
+        //System.out.println(query_success);
     }
 
     /** Longitudinal distance per pixel calculation. */
@@ -99,7 +121,7 @@ public class Rasterer {
                 params.get("ullon"), TILE_SIZE);
 
         int depth = 0;
-        while (expectedLonDPP < lonDPP_depth[depth]) {
+        while (expectedLonDPP < lonDPP_depth[depth] && depth != MAX_DEPTH) {
             ++depth;
         }
         return depth;
@@ -226,8 +248,8 @@ public class Rasterer {
 //        calculateULTile();
 //        calculateLRTile();
 //        testCalculateCornerTile();
-        calculateRenderGrid();
-
+//        calculateRenderGrid();
+        System.out.println(checkQuery());
     }
 
 
@@ -236,6 +258,13 @@ public class Rasterer {
         rast.generateLonDPPValues();
 
         Map<String, Double> query = new HashMap<>();
+//        query.put("lrlon", -122.24053369025242);
+//        query.put("ullon", -122.24163047377972);
+//        query.put("w",892.0);
+//        query.put("h", 875.0);
+//        query.put("ullat", 37.87655856892288);
+//        query.put("lrlat", 37.87548268822065);
+
         query.put("lrlon", -122.24053369025242);
         query.put("ullon", -122.24163047377972);
         query.put("w",892.0);
