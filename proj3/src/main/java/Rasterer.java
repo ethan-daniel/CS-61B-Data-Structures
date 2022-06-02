@@ -90,23 +90,8 @@ public class Rasterer {
         }
     }
 
-    /** Returns true if a number is between two other numbers. */
-    private boolean checkFits(double beginning, double end, double point) {
-//        System.out.println("Beginning: " + beginning + " End: " +
-//                end + " Point: " + point);
-
-        return point >= beginning && point <= end;
-    }
-
-
-
-    /** Returns the upper-left corner tile for the query box.
-     * ULLON -> LRLON (+ direction)
-     * ULLAT -> LRLAT (- direction) */
-    private String calculateULTile() {
-        String tile = "";
-
-        // Get depth
+    /** Calculates the depth for rastering. */
+    private int calculateDepth() {
         double expectedLonDPP = calculateLonDPP(params.get("lrlon"),
                 params.get("ullon"), TILE_SIZE);
 
@@ -114,6 +99,30 @@ public class Rasterer {
         while (expectedLonDPP < lonDPP_depth[depth]) {
             ++depth;
         }
+        return depth;
+    }
+
+    /** Helper to set a corner with a value. */
+    private void setRasterCornerValue(String corner, double value) {
+        if (corner.equals("lrlon")) {
+            raster_lr_lon = value;
+        } else if (corner.equals("ullon")) {
+            raster_ul_lon = value;
+        } else if (corner.equals("ullat")) {
+            raster_ul_lat = value;
+        } else if (corner.equals("lrlat")) {
+            raster_lr_lat = value;
+        }
+    }
+
+    /** Returns the a corner tile for the query box.
+     * ULLON -> LRLON (+ direction)
+     * ULLAT -> LRLAT (- direction) */
+    private String calculateCornerTile(String cornerLon, String cornerLat) {
+        String tile = "";
+
+        // Get depth
+        depth = calculateDepth();
 
         // Get x
         // Get y
@@ -127,7 +136,7 @@ public class Rasterer {
         int y = 0;
 
         for (; x != numImagesPerSide; ++x) {
-            if (image_left_longitude > params.get("ullon")) {
+            if (image_left_longitude > params.get(cornerLon)) {
                 --x;
                 break;
             }
@@ -135,22 +144,56 @@ public class Rasterer {
         }
 
         for (; y != numImagesPerSide; ++y) {
-            if (image_upper_latitude < params.get("ullat")) {
+            if (image_upper_latitude < params.get(cornerLat)) {
                 --y;
                 break;
             }
                 image_upper_latitude -= image_height;
         }
 
+        if (cornerLon.equals("ullon")) {
+            setRasterCornerValue(cornerLon, image_left_longitude - image_width);
+        } else {
+            setRasterCornerValue(cornerLon, image_left_longitude);
+        }
+
+        if (cornerLat.equals("ullat")) {
+            setRasterCornerValue(cornerLat, image_upper_latitude + image_height);
+        } else {
+            setRasterCornerValue(cornerLat, image_upper_latitude);
+        }
+
+
         tile = "d" + depth + "_x" + x + "_y" + y + ".png";
-        //System.out.println(tile);
+        System.out.println(tile);
+//        System.out.println(raster_ul_lon);
+//        System.out.println(raster_ul_lat);
 
         return tile;
     }
 
+    private void calculateRenderGrid() {
+        //String
+    }
+
+    private void testCalculateCornerTile() {
+        calculateCornerTile("ullon", "ullat");  // upper-left corner
+        calculateCornerTile("ullon", "lrlat"); // lower-left corner
+        calculateCornerTile("lrlon", "ullat"); // upper-right corner
+        calculateCornerTile("lrlon", "lrlat"); // lower-right corner
+
+        System.out.println("raster_ul_lat: " + raster_ul_lat);
+        System.out.println("raster_ul_lon: " + raster_ul_lon);
+        System.out.println("raster_lr_lat: " + raster_lr_lat);
+        System.out.println("raster_lr_lon: " + raster_lr_lon);
+
+    }
+
     /** For testing ONLY*/
     public void tempSolve() {
-        calculateULTile();
+//        calculateULTile();
+//        calculateLRTile();
+        testCalculateCornerTile();
 
     }
 
