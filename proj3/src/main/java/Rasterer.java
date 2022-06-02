@@ -1,5 +1,7 @@
 import javax.management.MBeanRegistration;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -66,6 +68,7 @@ public class Rasterer {
 //        System.out.println("Since you haven't implemented getMapRaster, nothing is displayed in "
 //                           + "your browser.");
         this.params = params;
+        depth = calculateDepth();
 
         return results;
     }
@@ -115,12 +118,11 @@ public class Rasterer {
         }
     }
 
-    /** Returns the a corner tile for the query box.
+    /** Returns the data of a corner tile for the query box.
      * ULLON -> LRLON (+ direction)
      * ULLAT -> LRLAT (- direction) */
-    private String calculateCornerTile(String cornerLon, String cornerLat) {
-        String tile = "";
-
+    private int[] calculateCornerTile(String cornerLon, String cornerLat) {
+        int[] data = new int[3];
         // Get depth
         depth = calculateDepth();
 
@@ -164,16 +166,46 @@ public class Rasterer {
         }
 
 
-        tile = "d" + depth + "_x" + x + "_y" + y + ".png";
-        System.out.println(tile);
+        //tile = "d" + depth + "_x" + x + "_y" + y + ".png";
+        data[0] = depth;
+        data[1] = x;
+        data[2] = y;
+//        System.out.println(data[0] + ", " + data[1] + ", " + data[2]);
 //        System.out.println(raster_ul_lon);
 //        System.out.println(raster_ul_lat);
 
-        return tile;
+        return data;
     }
 
+    /** Calculates render grid. */
     private void calculateRenderGrid() {
-        //String
+        int[] upperLeft = calculateCornerTile("ullon", "ullat");
+        int[] lowerRight = calculateCornerTile("lrlon", "lrlat");
+
+        int xMin = upperLeft[1];
+        int xMax = lowerRight[1];
+        int yMin = upperLeft[2];
+        int yMax = lowerRight[2];
+
+//        System.out.println("xMin: " + xMin + ", xMax: " + xMax + ", yMin: " + yMin +
+//                ", yMax: " + yMax);
+
+        String[] render_row = new String[xMax - xMin + 1];
+        render_grid = new String[yMax - yMin + 1][xMax - xMin + 1];
+
+        int i = 0;
+        int j = 0;
+        for (int y = upperLeft[2]; y <= lowerRight[2]; ++y) {
+            i = 0;
+            render_row = new String[xMax - xMin + 1];
+            for (int x = upperLeft[1]; x <= lowerRight[1]; ++x) {
+                String tile = "d" + depth + "_x" + x + "_y" + y + ".png";
+                render_row[i] = tile;
+                ++i;
+            }
+            render_grid[j] = render_row;
+            ++j;
+        }
     }
 
     private void testCalculateCornerTile() {
@@ -193,7 +225,8 @@ public class Rasterer {
     public void tempSolve() {
 //        calculateULTile();
 //        calculateLRTile();
-        testCalculateCornerTile();
+//        testCalculateCornerTile();
+        calculateRenderGrid();
 
     }
 
