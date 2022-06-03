@@ -1,7 +1,4 @@
-import javax.management.MBeanRegistration;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,7 +22,6 @@ public class Rasterer {
     private boolean query_success;
     private double[] lonDPP_depth;
     Map<String, Double> params;
-    //private double width;
 
     public Rasterer() {
         params = new HashMap<>();
@@ -80,6 +76,7 @@ public class Rasterer {
         depth = calculateDepth();
 
         query_success = checkQuery();
+        query_success = true;
         results.put("query_success", query_success);
         if (query_success == false) {
             return results;
@@ -132,7 +129,7 @@ public class Rasterer {
     /** Calculates the depth for rastering. */
     private int calculateDepth() {
         double expectedLonDPP = calculateLonDPP(params.get("lrlon"),
-                params.get("ullon"), TILE_SIZE);
+                params.get("ullon"), params.get("w"));
 
         int depth = 0;
         while (expectedLonDPP < lonDPP_depth[depth] && depth != MAX_DEPTH) {
@@ -159,8 +156,6 @@ public class Rasterer {
      * ULLAT -> LRLAT (- direction) */
     private int[] calculateCornerTile(String cornerLon, String cornerLat) {
         int[] data = new int[3];
-        // Get depth
-        depth = calculateDepth();
 
         // Get x
         // Get y
@@ -170,12 +165,14 @@ public class Rasterer {
         double image_height = Math.abs((ROOT_ULLAT - ROOT_LRLAT) / numImagesPerSide);
         double image_left_longitude = ROOT_ULLON;
         double image_upper_latitude = ROOT_ULLAT;
+
+        double image_right_longitude = ROOT_LRLON;
+        double image_lower_latitude = ROOT_LRLAT;
+
         int x = 0;
         int y = 0;
-
         for (; x != numImagesPerSide; ++x) {
             if (image_left_longitude > params.get(cornerLon)) {
-                --x;
                 break;
             }
             image_left_longitude += image_width;
@@ -183,24 +180,29 @@ public class Rasterer {
 
         for (; y != numImagesPerSide; ++y) {
             if (image_upper_latitude < params.get(cornerLat)) {
-                --y;
                 break;
             }
                 image_upper_latitude -= image_height;
         }
 
-        if (cornerLon.equals("ullon")) {
+        if (cornerLon.equals("ullon") && x != 0) {
             setRasterCornerValue(cornerLon, image_left_longitude - image_width);
         } else {
             setRasterCornerValue(cornerLon, image_left_longitude);
         }
 
-        if (cornerLat.equals("ullat")) {
+        if (cornerLat.equals("ullat") && y != 0) {
             setRasterCornerValue(cornerLat, image_upper_latitude + image_height);
         } else {
             setRasterCornerValue(cornerLat, image_upper_latitude);
         }
 
+        if (x != 0) {
+            --x;
+        }
+        if (y != 0) {
+            --y;
+        }
 
         //tile = "d" + depth + "_x" + x + "_y" + y + ".png";
         data[0] = depth;
@@ -223,10 +225,10 @@ public class Rasterer {
         int yMin = upperLeft[2];
         int yMax = lowerRight[2];
 
-//        System.out.println("xMin: " + xMin + ", xMax: " + xMax + ", yMin: " + yMin +
-//                ", yMax: " + yMax);
+        System.out.println("xMin: " + xMin + ", xMax: " + xMax + ", yMin: " + yMin +
+                ", yMax: " + yMax);
 
-        String[] render_row = new String[xMax - xMin + 1];
+        String[] render_row;
         render_grid = new String[yMax - yMin + 1][xMax - xMin + 1];
 
         int i = 0;
@@ -259,15 +261,13 @@ public class Rasterer {
 
     /** For testing ONLY*/
     public void tempSolve() {
-//        testCalculateCornerTile();
+        testCalculateCornerTile();
 //        calculateRenderGrid();
 //        System.out.println(checkQuery());
     }
 
 
-    public static void main(String[] args) {
-        Rasterer rast = new Rasterer();
-
+    private static Map<String, Double> test() {
         Map<String, Double> query = new HashMap<>();
         query.put("lrlon", -122.24053369025242);
         query.put("ullon", -122.24163047377972);
@@ -276,16 +276,43 @@ public class Rasterer {
         query.put("ullat", 37.87655856892288);
         query.put("lrlat", 37.87548268822065);
 
-//        query.put("lrlon", -122.24053369025242);
-//        query.put("ullon", -122.24163047377972);
-//        query.put("w",892.0);
-//        query.put("h", 875.0);
-//        query.put("ullat", 37.87655856892288);
-//        query.put("lrlat", 37.87548268822065);
+        return query;
+    }
+
+    private static Map<String, Double> test1234() {
+        Map<String, Double> query = new HashMap<>();
+        query.put("lrlon", -122.20908713544797);
+        query.put("ullon", -122.3027284165759);
+        query.put("w",305.0);
+        query.put("h", 300.0);
+        query.put("ullat", 37.88708748276975);
+        query.put("lrlat", 37.848731523430196);
+
+        return query;
+    }
+
+    private static Map<String, Double> testTwelveImages() {
+        Map<String, Double> query = new HashMap<>();
+        query.put("lrlon", -122.2104604264636);
+        query.put("ullon", -122.30410170759153);
+        query.put("w",1091.0);
+        query.put("h", 566.0);
+        query.put("ullat", 37.870213571328854);
+        query.put("lrlat", 37.8318576119893);
+
+        return query;
+    }
+
+    public static void main(String[] args) {
+        Rasterer rast = new Rasterer();
+
+        //Map<String, Double> query = query = test();
+        //Map<String, Double> query = query = test1234();
+        Map<String, Double> query = query = testTwelveImages();
 
         rast.getMapRaster(query);
 
-//        rast.tempSolve();
+        rast.tempSolve();
 
     }
 
