@@ -84,7 +84,7 @@ public class MergeSort {
             retQ.enqueue(mergeSortedQueues(q1, q2));
 
         }
-        
+
         return retQ.dequeue();
     }
 
