@@ -74,6 +74,9 @@ public class GraphBuildingHandler extends DefaultHandler {
 
             /* TODO Use the above information to save a "node" to somewhere. */
             /* Hint: A graph-like structure would be nice. */
+            GraphDB.Node n = new GraphDB.Node(attributes.getValue("id"),
+                    attributes.getValue("lon"), attributes.getValue("lat"));
+            g.addNode(n);
 
         } else if (qName.equals("way")) {
             /* We encountered a new <way...> tag. */
@@ -104,7 +107,7 @@ public class GraphBuildingHandler extends DefaultHandler {
             } else if (k.equals("name")) {
                 //System.out.println("Way Name: " + v);
             }
-//            System.out.println("Tag with k=" + k + ", v=" + v + ".");
+            //System.out.println("Tag with k=" + k + ", v=" + v + ".");
         } else if (activeState.equals("node") && qName.equals("tag") && attributes.getValue("k")
                 .equals("name")) {
             /* While looking at a node, we found a <tag...> with k="name". */
@@ -133,7 +136,7 @@ public class GraphBuildingHandler extends DefaultHandler {
             /* We are done looking at a way. (We finished looking at the nodes, speeds, etc...)*/
             /* Hint1: If you have stored the possible connections for this way, here's your
             chance to actually connect the nodes together if the way is valid. */
-//            System.out.println("Finishing a way...");
+            //System.out.println("Finishing a way...");
         }
     }
 

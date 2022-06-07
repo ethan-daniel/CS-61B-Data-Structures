@@ -7,6 +7,8 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Graph for storing all of the intersection (vertex) and road (edge) information.
@@ -20,6 +22,8 @@ import java.util.ArrayList;
 public class GraphDB {
     /** Your instance variables for storing the graph. You should consider
      * creating helper classes, e.g. Node, Edge, etc. */
+
+    private final Map<String, Node> nodes = new LinkedHashMap<>();
 
     /**
      * Example constructor shows how to create and start an XML parser.
@@ -156,4 +160,36 @@ public class GraphDB {
     double lat(long v) {
         return 0;
     }
+
+    /** Add a node to the database. */
+    void addNode(Node n) {
+        this.nodes.put(n.id, n);
+    }
+
+    /** Add an edge to the database. */
+    void addEdge() {
+
+    }
+
+    /** Remove a node from the database. */
+    void removeNode() {
+
+    }
+
+    /** A node. */
+    static class Node {
+        String id;
+        String lon;
+        String lat;
+
+        Node(String id, String lon, String lat) {
+            this.id = id;
+            this.lon = lon;
+            this.lat = lat;
+        }
+    }
+
+
+
+
 }
