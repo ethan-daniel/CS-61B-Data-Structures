@@ -7,8 +7,11 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
 
 /**
  * Graph for storing all of the intersection (vertex) and road (edge) information.
@@ -23,7 +26,7 @@ public class GraphDB {
     /** Your instance variables for storing the graph. You should consider
      * creating helper classes, e.g. Node, Edge, etc. */
 
-    private final Map<String, Node> nodes = new LinkedHashMap<>();
+    private final Map<String, Node> nodes = new HashMap<>();
 
     /**
      * Example constructor shows how to create and start an XML parser.
@@ -61,7 +64,13 @@ public class GraphDB {
      *  we can reasonably assume this since typically roads are connected.
      */
     private void clean() {
-        // TODO: Your code here.
+        String[] arrNodes = nodes.keySet().toArray(new String[nodes.size()]);
+        for (int i = 0; i != arrNodes.length; ++i) {
+            Node n = nodes.get(arrNodes[i]);
+            if (n.numEdges() == 0) {
+                removeNode(arrNodes[i]);
+            }
+        }
     }
 
     /**
@@ -69,8 +78,13 @@ public class GraphDB {
      * @return An iterable of id's of all vertices in the graph.
      */
     Iterable<Long> vertices() {
+        List<Long> vertices = new ArrayList<>();
+        for (String id : nodes.keySet()) {
+            long num = Long.parseLong(id);
+            vertices.add(num);
+        }
         //YOUR CODE HERE, this currently returns only an empty list.
-        return new ArrayList<Long>();
+        return vertices;
     }
 
     /**
@@ -79,7 +93,15 @@ public class GraphDB {
      * @return An iterable of the ids of the neighbors of v.
      */
     Iterable<Long> adjacent(long v) {
-        return null;
+        List<Long> vertices = new ArrayList<>();
+        String s = String.valueOf(v);
+        Node n = nodes.get(s);
+        for (String vertex : n.edges) {
+            long num = Long.parseLong(vertex);
+            vertices.add(num);
+        }
+
+        return vertices;
     }
 
     /**
@@ -140,7 +162,22 @@ public class GraphDB {
      * @return The id of the node in the graph closest to the target.
      */
     long closest(double lon, double lat) {
-        return 0;
+        double minDis = Double.MAX_VALUE;
+        long minV = Long.parseLong(nodes.keySet().iterator().next());
+
+        for (String id : nodes.keySet()) {
+            long v = Long.parseLong(id);
+            double vLon = lon(v);
+            double vLat = lat(v);
+            double distance = distance(vLon, vLat, lon, lat);
+
+            if (distance < minDis) {
+                minDis = distance;
+                minV = v;
+            }
+        }
+
+        return minV;
     }
 
     /**
@@ -149,7 +186,10 @@ public class GraphDB {
      * @return The longitude of the vertex.
      */
     double lon(long v) {
-        return 0;
+        String s = String.valueOf(v);
+        Node n = nodes.get(s);
+        double num = Double.parseDouble(n.lon);
+        return num;
     }
 
     /**
@@ -158,7 +198,10 @@ public class GraphDB {
      * @return The latitude of the vertex.
      */
     double lat(long v) {
-        return 0;
+        String s = String.valueOf(v);
+        Node n = nodes.get(s);
+        double num = Double.parseDouble(n.lat);
+        return num;
     }
 
     /** Add a node to the database. */
@@ -167,13 +210,14 @@ public class GraphDB {
     }
 
     /** Add an edge to the database. */
-    void addEdge() {
-
+    void addEdge(String from, String to) {
+        this.nodes.get(to).edges.add(from);
+        this.nodes.get(from).edges.add(to);
     }
 
     /** Remove a node from the database. */
-    void removeNode() {
-
+    void removeNode(String id) {
+        this.nodes.remove(id);
     }
 
     /** A node. */
@@ -181,15 +225,22 @@ public class GraphDB {
         String id;
         String lon;
         String lat;
+        Set<String> edges;
+        String locationName;
 
         Node(String id, String lon, String lat) {
             this.id = id;
             this.lon = lon;
             this.lat = lat;
+            this.edges = new HashSet<>();
+        }
+
+        public void setLocationName(String locationName) {
+            this.locationName = locationName;
+        }
+
+        public int numEdges() {
+            return edges.size();
         }
     }
-
-
-
-
 }

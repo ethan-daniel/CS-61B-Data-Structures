@@ -2,6 +2,8 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -38,6 +40,11 @@ public class GraphBuildingHandler extends DefaultHandler {
                     "secondary_link", "tertiary_link"));
     private String activeState = "";
     private final GraphDB g;
+    private List<String> connections;
+    private GraphDB.Node lastNode;
+    private String maxSpeed;
+    private Boolean flag;
+    private String wayName;
 
     /**
      * Create a new GraphBuildingHandler.
@@ -77,14 +84,19 @@ public class GraphBuildingHandler extends DefaultHandler {
             GraphDB.Node n = new GraphDB.Node(attributes.getValue("id"),
                     attributes.getValue("lon"), attributes.getValue("lat"));
             g.addNode(n);
+            lastNode = n;
 
         } else if (qName.equals("way")) {
             /* We encountered a new <way...> tag. */
             activeState = "way";
-//            System.out.println("Beginning a way...");
+            lastNode = null;
+            connections = new ArrayList<>();
+
         } else if (activeState.equals("way") && qName.equals("nd")) {
             /* While looking at a way, we found a <nd...> tag. */
             //System.out.println("Id of a node in this way: " + attributes.getValue("ref"));
+//            to.add(attributes.getValue("ref"));
+            connections.add(attributes.getValue("ref"));
 
             /* TODO Use the above id to make "possible" connections between the nodes in this way */
             /* Hint1: It would be useful to remember what was the last node in this way. */
@@ -94,18 +106,27 @@ public class GraphBuildingHandler extends DefaultHandler {
             remember whether this way is valid or not. */
 
         } else if (activeState.equals("way") && qName.equals("tag")) {
+
+            //System.out.println("List of possible connections: " + connections);
+            //System.out.println("Last node: " + lastNode);
+
             /* While looking at a way, we found a <tag...> tag. */
             String k = attributes.getValue("k");
             String v = attributes.getValue("v");
             if (k.equals("maxspeed")) {
                 //System.out.println("Max Speed: " + v);
                 /* TODO set the max speed of the "current way" here. */
+                maxSpeed = v;
             } else if (k.equals("highway")) {
                 //System.out.println("Highway type: " + v);
                 /* TODO Figure out whether this way and its connections are valid. */
                 /* Hint: Setting a "flag" is good enough! */
+                if (ALLOWED_HIGHWAY_TYPES.contains(v)) {
+                    flag = true;
+                }
             } else if (k.equals("name")) {
                 //System.out.println("Way Name: " + v);
+                wayName = v;
             }
             //System.out.println("Tag with k=" + k + ", v=" + v + ".");
         } else if (activeState.equals("node") && qName.equals("tag") && attributes.getValue("k")
@@ -115,7 +136,11 @@ public class GraphBuildingHandler extends DefaultHandler {
             /* Hint: Since we found this <tag...> INSIDE a node, we should probably remember which
             node this tag belongs to. Remember XML is parsed top-to-bottom, so probably it's the
             last node that you looked at (check the first if-case). */
+
+            lastNode.setLocationName(attributes.getValue("v"));
+
 //            System.out.println("Node's name: " + attributes.getValue("v"));
+//            System.out.println(lastNode.locationName);
         }
     }
 
@@ -137,6 +162,20 @@ public class GraphBuildingHandler extends DefaultHandler {
             /* Hint1: If you have stored the possible connections for this way, here's your
             chance to actually connect the nodes together if the way is valid. */
             //System.out.println("Finishing a way...");
+
+            if (flag) {
+                if (connections.size() != 1) {
+                    for (int i = 0; i != connections.size() - 1; ++i) {
+                        this.g.addEdge(connections.get(i),
+                                connections.get(i + 1));
+                    }
+                }
+            }
+            connections = null;
+            lastNode = null;
+            maxSpeed = null;
+            wayName = null;
+            flag = false;
         }
     }
 
