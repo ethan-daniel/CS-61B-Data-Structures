@@ -1,7 +1,12 @@
 import java.util.List;
 import java.util.Objects;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
 
 /**
  * This class provides a shortestPath method for finding routes between two points
@@ -25,7 +30,52 @@ public class Router {
      */
     public static List<Long> shortestPath(GraphDB g, double stlon, double stlat,
                                           double destlon, double destlat) {
+
+        Queue<GraphDB.Node> fringe = new PriorityQueue<>(10, new Comparator<GraphDB.Node>() {
+            public int compare(GraphDB.Node node1, GraphDB.Node node2) {
+                if (node1.getPriority() > node2.getPriority()) return -1;
+                if (node1.getPriority() < node2.getPriority()) return 1;
+                return 0;
+            }
+        });
+        HashSet<GraphDB.Node> visitedNodes = new HashSet<>();
+
+        double totalDistance = g.distance(stlon, stlat, destlon, destlat);
+        long numStartID = g.closest(stlon, stlat);
+        long numDestID = g.closest(destlon, destlat);
+        String startID = String.valueOf(numStartID);
+        String destID = String.valueOf(numDestID);
+
+        GraphDB.Node vertex = g.getNode(startID);
+        vertex.setPriority(0);
+
+        List<Long> best = new ArrayList<>();
+        fringe.add(vertex);
+
+        while (!fringe.isEmpty()) {
+            GraphDB.Node currentVertex = fringe.remove();
+            visitedNodes.add(currentVertex);
+
+            if (currentVertex.getID() == numDestID) {
+                break;
+            } else {
+                
+            }
+
+        }
+
+
+
+
         return null; // FIXME
+    }
+
+
+    /** Helper to reset the priorities of the nodes in the graph. */
+    private void cleanPriorities(HashSet<GraphDB.Node> nodes) {
+        for (GraphDB.Node n : nodes) {
+            n.setPriority(0);
+        }
     }
 
     /**
