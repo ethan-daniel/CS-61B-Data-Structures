@@ -42,20 +42,10 @@ public class Router {
         // Parent of every vertex
         HashMap<Long, Long> parents = new HashMap<>();
 
-        Queue<Long> fringe = new PriorityQueue<>(16, new Comparator<Long>() {
+        Queue<Long> fringe = new PriorityQueue<>(new Comparator<Long>() {
             public int compare(Long v1, Long v2) {
-                double h1 = g.distance(v1, goal);
-                double h2 = g.distance(v2, goal);
-                double priority1 = bestDist.get(v1) + h1;
-                double priority2 = bestDist.get(v2) + h2;
-
-                if (priority1 < priority2) {
-                    return -1;
-                }
-                if (priority1 > priority2) {
-                    return 1;
-                }
-                return 0;
+                return Double.compare(bestDist.get(v1) + g.distance(v1, goal),
+                        bestDist.get(v2) + g.distance(v2, goal));
             }
         });
 
@@ -63,6 +53,7 @@ public class Router {
 
         for (long i : g.vertices()) {
             bestDist.put(i, Double.MAX_VALUE);
+            parents.put(i, 0L);
         }
         bestDist.replace(s, 0.0);
 
@@ -78,7 +69,7 @@ public class Router {
                 double distance = bestDist.get(v) + g.distance(v, w);
                 if (distance < bestDist.get(w)) {
                     bestDist.replace(w, distance);
-                    parents.put(w, v);
+                    parents.replace(w, v);
                     fringe.remove(w);
                     fringe.add(w);
                 }
