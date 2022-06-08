@@ -31,7 +31,7 @@ public class Router {
      */
     public static List<Long> shortestPath(GraphDB g, double stlon, double stlat,
                                           double destlon, double destlat) {
-        // Approach 2: Enqueue onle the source, allow multiple copies
+        // Approach 2: Enqueue only the source, allow multiple copies
         double totalDistance = g.distance(stlon, stlat, destlon, destlat);
         long s = g.closest(stlon, stlat);
         long goal = g.closest(destlon, destlat);
@@ -53,9 +53,11 @@ public class Router {
 
         for (long i : g.vertices()) {
             bestDist.put(i, Double.MAX_VALUE);
-            parents.put(i, 0L);
+            //parents.put(i, 0L);
         }
         bestDist.replace(s, 0.0);
+
+        long prevV = -1;    // -1 placeholder for an invalid ID
 
         while (!fringe.isEmpty()) {
             long v = fringe.remove();
@@ -66,14 +68,17 @@ public class Router {
             }
 
             for (long w : g.adjacent(v)) {
-                double distance = bestDist.get(v) + g.distance(v, w);
-                if (distance < bestDist.get(w)) {
-                    bestDist.replace(w, distance);
-                    parents.replace(w, v);
-                    fringe.remove(w);
-                    fringe.add(w);
+                if (prevV == -1 || w != prevV) {
+                    double distance = bestDist.get(v) + g.distance(v, w);
+                    if (distance < bestDist.get(w)) {
+                        bestDist.replace(w, distance);
+                        parents.put(w, v);
+                        fringe.remove(w);
+                        fringe.add(w);
+                    }
                 }
             }
+            prevV = v;
         }
 
         List<Long> ret = new ArrayList<>();
