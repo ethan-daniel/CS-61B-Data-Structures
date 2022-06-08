@@ -1,4 +1,11 @@
-import java.util.*;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Queue;
+import java.util.PriorityQueue;
+import java.util.Comparator;
+import java.util.Collections;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,8 +49,12 @@ public class Router {
                 double priority1 = bestDist.get(v1) + h1;
                 double priority2 = bestDist.get(v2) + h2;
 
-                if (priority1 > priority2 ) return -1;
-                if (priority1 < priority2) return 1;
+                if (priority1 < priority2) {
+                    return -1;
+                }
+                if (priority1 > priority2) {
+                    return 1;
+                }
                 return 0;
             }
         });
@@ -65,7 +76,7 @@ public class Router {
 
             for (long w : g.adjacent(v)) {
                 double distance = bestDist.get(v) + g.distance(v, w);
-                if (distance  < bestDist.get(w)) {
+                if (distance < bestDist.get(w)) {
                     bestDist.replace(w, distance);
                     parents.put(w, v);
                     fringe.add(w);
@@ -78,6 +89,7 @@ public class Router {
             ret.add(finish);
             finish = parents.get(finish);
         }
+        ret.add(s);
         Collections.reverse(ret);
 
 
