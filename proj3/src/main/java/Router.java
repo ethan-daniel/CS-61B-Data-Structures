@@ -79,6 +79,7 @@ public class Router {
                 if (distance < bestDist.get(w)) {
                     bestDist.replace(w, distance);
                     parents.put(w, v);
+                    fringe.remove(w);
                     fringe.add(w);
                 }
             }
@@ -91,7 +92,6 @@ public class Router {
         }
         ret.add(s);
         Collections.reverse(ret);
-
 
         return ret;
     }
