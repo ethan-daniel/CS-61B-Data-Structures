@@ -232,9 +232,6 @@ public class GraphDB {
         String lat;
         Set<String> edges;
         String locationName;
-        long priority;  // Smaller == Higher Priority
-
-        Node prevNode;
 
         Node(String id, String lon, String lat) {
             this.id = id;
@@ -249,18 +246,6 @@ public class GraphDB {
 
         public int numEdges() {
             return edges.size();
-        }
-
-        public void setPriority(long p) {
-            this.priority = p;
-        }
-
-        public void setPrevNode(Node n) {
-            this.prevNode = n;
-        }
-
-        public long getPriority() {
-            return priority;
         }
 
         public long getID() {
