@@ -6,8 +6,6 @@ import java.util.PriorityQueue;
 import java.util.Comparator;
 import java.util.Collections;
 import java.util.Objects;
-import java.util.Set;
-import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,8 +31,7 @@ public class Router {
      */
     public static List<Long> shortestPath(GraphDB g, double stlon, double stlat,
                                           double destlon, double destlat) {
-        // Approach 2X: Enqueue Only the Source, Allow Multiple Copies,
-        // with Marked Set (EOSAMCMS)
+        // Approach 2: Enqueue only the source, allow multiple copies
         long s = g.closest(stlon, stlat);
         long goal = g.closest(destlon, destlat);
         Long finish = 0L;
@@ -42,8 +39,6 @@ public class Router {
         HashMap<Long, Double> bestDist = new HashMap<>();
         // Parent of every vertex
         HashMap<Long, Long> parents = new HashMap<>();
-
-        Set<Long> marked = new HashSet<>();
 
         Queue<Long> fringe = new PriorityQueue<>(new Comparator<Long>() {
             public int compare(Long v1, Long v2) {
@@ -61,16 +56,12 @@ public class Router {
 
         while (!fringe.isEmpty()) {
             long v = fringe.remove();
-            if (marked.contains(v)) {
-                continue;
-            }
 
             if (v == goal) {
                 finish = v;
                 break;
             }
 
-            marked.add(v);
             for (long w : g.adjacent(v)) {
                 double distance = bestDist.get(v) + g.distance(v, w);
                 if (distance < bestDist.get(w)) {
