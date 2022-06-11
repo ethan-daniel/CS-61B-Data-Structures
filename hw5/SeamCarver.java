@@ -1,11 +1,9 @@
 import edu.princeton.cs.algs4.Picture;
-import java.lang.Math;
-
 import java.awt.Color;
 
 public class SeamCarver {
-    private final static int DNE = -1;
-    private final Picture pic;
+    private final int DNE = -1;
+    private Picture pic;
     private double[][] energies;
     public SeamCarver(Picture picture) {
         pic = picture;
@@ -45,7 +43,7 @@ public class SeamCarver {
 
     // sequence of indices for horizontal seam
     public int[] findHorizontalSeam() {
-        int[] retSeam = new int[width()];
+        int[] retSeam;
         transpose();
         retSeam = findVerticalSeam();
         transpose();
@@ -76,9 +74,7 @@ public class SeamCarver {
                 } else if (currentX - 1 < 0 && currentX + 1 < width) {    // left DNE
                     currentX = compareXs(DNE, currentX, currentX + 1, y);
                     totalEnergy += energies[currentX][y];
-                }
-
-                else if (currentX + 1 > width && currentX - 1 > 0) {    // right DNE
+                } else if (currentX + 1 > width && currentX - 1 > 0) {    // right DNE
                     currentX = compareXs(currentX - 1, currentX, DNE, y);
                     totalEnergy += energies[currentX][y];
 
@@ -99,12 +95,12 @@ public class SeamCarver {
 
     // remove horizontal seam from picture
     public void removeHorizontalSeam(int[] seam) {
-
+        pic = SeamRemover.removeHorizontalSeam(pic, seam);
     }
 
     // remove vertical seam from picture
     public void removeVerticalSeam(int[] seam) {
-
+        pic = SeamRemover.removeVerticalSeam(pic, seam);
     }
 
     private boolean validColRow(int x, int y) {
