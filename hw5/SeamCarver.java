@@ -59,7 +59,7 @@ public class SeamCarver {
         double minTotalEnergy = Double.MAX_VALUE;
         int currentX;
 
-        for (int x = 0; x != width - 1; ++x) {    // do this calculation for width # times
+        for (int x = 0; x != width; ++x) {    // do this calculation for width # times
             seam[0] = x;
             currentX = x;
             totalEnergy += energies[currentX][0];
