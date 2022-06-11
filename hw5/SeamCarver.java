@@ -6,7 +6,7 @@ import java.awt.Color;
 public class SeamCarver {
     private final static int DNE = -1;
     private final Picture pic;
-    private final double[][] energies;
+    private double[][] energies;
     public SeamCarver(Picture picture) {
         pic = picture;
         energies = new double[width()][height()];
@@ -45,40 +45,46 @@ public class SeamCarver {
 
     // sequence of indices for horizontal seam
     public int[] findHorizontalSeam() {
+        int[] retSeam = new int[width()];
+        transpose();
+        retSeam = findVerticalSeam();
+        transpose();
 
-
-        return null;
+        return retSeam;
     }
 
     // sequence of indices for vertical seam
     public int[] findVerticalSeam() {
-        int[] seam = new int[height()];
-        int[] retSeam = new int[height()];
+        int height = energies[0].length;
+        int width = energies.length;
+
+        int[] seam = new int[height];
+        int[] retSeam = new int[height];
         double totalEnergy = 0;
         double minTotalEnergy = Double.MAX_VALUE;
         int currentX;
 
-        for (int x = 0; x != width() - 1; ++x) {    // do this calculation for width # times
+        for (int x = 0; x != width - 1; ++x) {    // do this calculation for width # times
             seam[0] = x;
             currentX = x;
-            totalEnergy += energy(currentX, 0);
-            for (int y = 1; y != height(); ++y) {   // vertical seam per x
-                if (currentX - 1 < 0 && currentX + 1 > width()) { // left and right DNE
+            totalEnergy += energies[currentX][0];
+            for (int y = 1; y != height; ++y) {   // vertical seam per x
+                if (currentX - 1 < 0 && currentX + 1 > width) { // left and right DNE
                     currentX = compareXs(DNE, currentX, DNE, y);
-                    totalEnergy += energy(currentX, y);
+                    totalEnergy += energies[currentX][y];
 
-                } else if (currentX - 1 < 0 && currentX + 1 < width()) {    // left DNE
+                } else if (currentX - 1 < 0 && currentX + 1 < width) {    // left DNE
                     currentX = compareXs(DNE, currentX, currentX + 1, y);
-                    totalEnergy += energy(currentX, y);
+                    totalEnergy += energies[currentX][y];
                 }
 
-                else if (currentX + 1 > width() && currentX - 1 > 0) {    // right DNE
+                else if (currentX + 1 > width && currentX - 1 > 0) {    // right DNE
                     currentX = compareXs(currentX - 1, currentX, DNE, y);
-                    totalEnergy += energy(currentX, y);
+                    totalEnergy += energies[currentX][y];
 
                 } else {    // left and right exists
                     currentX = compareXs(currentX - 1, currentX, currentX + 1, y);
-                    totalEnergy += energy(currentX, y);
+                    totalEnergy += energies[currentX][y];
                 }
                 seam[y] = currentX;
             }
@@ -188,6 +194,20 @@ public class SeamCarver {
             }
             return ret;
         }
+    }
+
+    private void transpose() {
+        int height = energies[0].length;
+        int width = energies.length;
+
+        double[][] transposed = new double[height][width];
+
+        for (int x = 0; x != height; ++x) {
+            for (int y = 0; y != width; ++y) {
+                transposed[x][y] = energies[y][x];
+            }
+        }
+        energies = transposed;
     }
 
 
