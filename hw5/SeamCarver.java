@@ -5,13 +5,13 @@ public class SeamCarver {
     private final int DNE = -1;
     private Picture pic;
     private double[][] energies;
-    private int width;
-    private int height;
+    private int w;
+    private int h;
 
     public SeamCarver(Picture picture) {
         pic = picture;
-        width = picture.width();
-        height = picture.height();
+        w = picture.width();
+        h = picture.height();
         calculateEnergies();
     }
 
@@ -22,12 +22,12 @@ public class SeamCarver {
 
     // width of current picture
     public int width() {
-        return width;
+        return w;
     }
 
     // height of current picture
     public int height() {
-        return height;
+        return h;
     }
 
     // energy of pixel at column x and row y
@@ -64,17 +64,15 @@ public class SeamCarver {
             currentX = x;
             totalEnergy += energies[currentX][0];
             for (int y = 1; y != height; ++y) {   // vertical seam per x
-                if (currentX - 1 < 0 && currentX + 1 > width) { // left and right DNE
+                if (currentX - 1 < 0 && currentX + 1 >= width) { // left and right DNE
                     currentX = compareXs(DNE, currentX, DNE, y);
                     totalEnergy += energies[currentX][y];
-
                 } else if (currentX - 1 < 0 && currentX + 1 < width) {    // left DNE
                     currentX = compareXs(DNE, currentX, currentX + 1, y);
                     totalEnergy += energies[currentX][y];
-                } else if (currentX + 1 > width && currentX - 1 > 0) {    // right DNE
+                } else if (currentX + 1 >= width && currentX - 1 > 0) {    // right DNE
                     currentX = compareXs(currentX - 1, currentX, DNE, y);
                     totalEnergy += energies[currentX][y];
-
                 } else {    // left and right exists
                     currentX = compareXs(currentX - 1, currentX, currentX + 1, y);
                     totalEnergy += energies[currentX][y];
@@ -97,7 +95,7 @@ public class SeamCarver {
         }
         if (isValidSeam(seam)) {
             pic = new Picture(SeamRemover.removeHorizontalSeam(pic, seam));
-            --height;
+            --h;
             calculateEnergies();
         } else {
             throw new java.lang.IllegalArgumentException();
@@ -110,8 +108,8 @@ public class SeamCarver {
             return;
         }
         if (isValidSeam(seam)) {
-            pic = new Picture(SeamRemover.removeHorizontalSeam(pic, seam));
-            --width;
+            pic = new Picture(SeamRemover.removeVerticalSeam(pic, seam));
+            --w;
             calculateEnergies();
         } else {
             throw new java.lang.IllegalArgumentException();
