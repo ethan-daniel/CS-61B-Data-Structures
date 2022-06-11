@@ -4,9 +4,19 @@ import java.lang.Math;
 import java.awt.Color;
 
 public class SeamCarver {
-    private Picture pic;
+    private final static int DNE = -1;
+    private final Picture pic;
+    private final double[][] energies;
     public SeamCarver(Picture picture) {
         pic = picture;
+        energies = new double[width()][height()];
+
+        for (int x = 0; x != width(); ++x) {
+            for (int y = 0; y != height(); ++y) {
+                energies[x][y] = energy(x, y);
+            }
+        }
+
     }
 
     // current picture
@@ -42,33 +52,43 @@ public class SeamCarver {
 
     // sequence of indices for vertical seam
     public int[] findVerticalSeam() {
-
         int[] seam = new int[height()];
-        int currentX = minCol();
-        seam[0] = currentX;
+        int[] retSeam = new int[height()];
+        double totalEnergy = 0;
+        double minTotalEnergy = Double.MAX_VALUE;
+        int currentX;
 
-        int leftX;
-        int rightX;
-        //int middleX;
+        for (int x = 0; x != width() - 1; ++x) {    // do this calculation for width # times
+            seam[0] = x;
+            currentX = x;
+            totalEnergy += energy(currentX, 0);
+            for (int y = 1; y != height(); ++y) {   // vertical seam per x
+                if (currentX - 1 < 0 && currentX + 1 > width()) { // left and right DNE
+                    currentX = compareXs(DNE, currentX, DNE, y);
+                    totalEnergy += energy(currentX, y);
 
-        int leftEnergy;
-        int rightEnergy;
+                } else if (currentX - 1 < 0 && currentX + 1 < width()) {    // left DNE
+                    currentX = compareXs(DNE, currentX, currentX + 1, y);
+                    totalEnergy += energy(currentX, y);
+                }
 
+                else if (currentX + 1 > width() && currentX - 1 > 0) {    // right DNE
+                    currentX = compareXs(currentX - 1, currentX, DNE, y);
+                    totalEnergy += energy(currentX, y);
 
-        for (int y = 1; y != height(); ++y) {
-            if (currentX - 1 > 0) {
-
+                } else {    // left and right exists
+                    currentX = compareXs(currentX - 1, currentX, currentX + 1, y);
+                    totalEnergy += energy(currentX, y);
+                }
+                seam[y] = currentX;
             }
-
-            if (currentX + 1 < width()) {
-
+            if (totalEnergy < minTotalEnergy) {
+                minTotalEnergy = totalEnergy;
+                System.arraycopy(seam, 0, retSeam, 0, seam.length);
             }
-
+            totalEnergy = 0.0;
         }
-
-
-
-        return seam;
+        return retSeam;
     }
 
     // remove horizontal seam from picture
@@ -139,6 +159,37 @@ public class SeamCarver {
 
         return (rY * rY) + (gY * gY) + (bY * bY);
     }
+
+    /** Chooses the smallest energy in the row in range of 3 choices. */
+    private int compareXs(int leftX, int middleX, int rightX, int y) {
+        if (leftX == DNE && rightX == DNE) {
+            return middleX;
+        } else if (leftX == DNE) {
+            if (energies[rightX][y] > energies[middleX][y]) {
+                return middleX;
+            } else {
+                return rightX;
+            }
+        } else if (rightX == DNE) {
+            if (energies[middleX][y] > energies[leftX][y]) {
+                return leftX;
+            } else {
+                return middleX;
+            }
+        } else {
+            double min = energies[leftX][y];
+            int ret = leftX;
+            if (energies[middleX][y] < min) {
+                min = energies[middleX][y];
+                ret = middleX;
+            }
+            if (energies[rightX][y] < min) {
+                ret = rightX;
+            }
+            return ret;
+        }
+    }
+
 
 //    private int minCol() {
 //        double minEnergy = energy(0, 0);
