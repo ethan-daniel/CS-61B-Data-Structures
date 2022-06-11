@@ -5,31 +5,29 @@ public class SeamCarver {
     private final int DNE = -1;
     private Picture pic;
     private double[][] energies;
+    private int width;
+    private int height;
+
     public SeamCarver(Picture picture) {
         pic = picture;
-        energies = new double[width()][height()];
-
-        for (int x = 0; x != width(); ++x) {
-            for (int y = 0; y != height(); ++y) {
-                energies[x][y] = energy(x, y);
-            }
-        }
-
+        width = picture.width();
+        height = picture.height();
+        calculateEnergies();
     }
 
     // current picture
     public Picture picture() {
-        return pic;
+        return new Picture(pic);
     }
 
     // width of current picture
     public int width() {
-        return pic.width();
+        return width;
     }
 
     // height of current picture
     public int height() {
-        return pic.height();
+        return height;
     }
 
     // energy of pixel at column x and row y
@@ -55,7 +53,6 @@ public class SeamCarver {
     public int[] findVerticalSeam() {
         int height = energies[0].length;
         int width = energies.length;
-
         int[] seam = new int[height];
         int[] retSeam = new int[height];
         double totalEnergy = 0;
@@ -95,12 +92,30 @@ public class SeamCarver {
 
     // remove horizontal seam from picture
     public void removeHorizontalSeam(int[] seam) {
-        pic = SeamRemover.removeHorizontalSeam(pic, seam);
+        if (seam.length == 0) {
+            return;
+        }
+        if (isValidSeam(seam)) {
+            pic = new Picture(SeamRemover.removeHorizontalSeam(pic, seam));
+            --height;
+            calculateEnergies();
+        } else {
+            throw new java.lang.IllegalArgumentException();
+        }
     }
 
     // remove vertical seam from picture
     public void removeVerticalSeam(int[] seam) {
-        pic = SeamRemover.removeVerticalSeam(pic, seam);
+        if (seam.length == 0) {
+            return;
+        }
+        if (isValidSeam(seam)) {
+            pic = new Picture(SeamRemover.removeHorizontalSeam(pic, seam));
+            --width;
+            calculateEnergies();
+        } else {
+            throw new java.lang.IllegalArgumentException();
+        }
     }
 
     private boolean validColRow(int x, int y) {
@@ -108,7 +123,9 @@ public class SeamCarver {
                 && y >= 0 && y < height();
     }
 
-    /** Computes the x-gradient. */
+    /**
+     * Computes the x-gradient.
+     */
     private int xGradient(int x, int y) {
         int leftX;
         int rightX;
@@ -135,7 +152,9 @@ public class SeamCarver {
         return (rX * rX) + (gX * gX) + (bX * bX);
     }
 
-    /** Computes the y-gradient. */
+    /**
+     * Computes the y-gradient.
+     */
     private int yGradient(int x, int y) {
         int lowerY;
         int upperY;
@@ -162,7 +181,9 @@ public class SeamCarver {
         return (rY * rY) + (gY * gY) + (bY * bY);
     }
 
-    /** Chooses the smallest energy in the row in range of 3 choices. */
+    /**
+     * Chooses the smallest energy in the row in range of 3 choices.
+     */
     private int compareXs(int leftX, int middleX, int rightX, int y) {
         if (leftX == DNE && rightX == DNE) {
             return middleX;
@@ -206,7 +227,24 @@ public class SeamCarver {
         energies = transposed;
     }
 
+    private boolean isValidSeam(int[] seam) {
+        for (int i = 0; i != seam.length - 1; ++i) {
+            if (Math.abs(seam[i] - seam[i + 1]) > 1) {
+                return false;
+            }
+        }
+        return true;
+    }
 
+    private void calculateEnergies() {
+        energies = new double[width()][height()];
+
+        for (int x = 0; x != width(); ++x) {
+            for (int y = 0; y != height(); ++y) {
+                energies[x][y] = energy(x, y);
+            }
+        }
+    }
 //    private int minCol() {
 //        double minEnergy = energy(0, 0);
 //        int min = 0;
