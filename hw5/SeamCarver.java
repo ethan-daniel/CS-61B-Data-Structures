@@ -272,6 +272,4 @@ public class SeamCarver {
 //
 //        return min;
 //    }
-
-
 }
