@@ -7,7 +7,7 @@ public class SawToothGenerator implements Generator {
     private int period;
     private int state;
 
-    SawToothGenerator(int inPeriod) {
+    public SawToothGenerator(int inPeriod) {
         state = 0;
         period = inPeriod;
     }
